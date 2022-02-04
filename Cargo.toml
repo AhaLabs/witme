@@ -4,7 +4,7 @@ authors = ["Willem Wyndham <willem@ahalabs.dev>"]
 version = "0.0.0"
 edition = "2021"
 description = "Tools for generating to and from wit format"
-keywords = ["WebAssembly", "Wasm", "wit", "WebAssemblyInterfaceTypes"]
+keywords = ["WebAssembly", "Wasm", "wit", "WasmInterfaceTypes"]
 repository = "https://github.com/ahalabs/witme"
 license = "MIT"
 
