@@ -6,6 +6,7 @@ edition = "2021"
 description = "Tools for generating to and from wit format"
 keywords = ["WebAssembly", "Wasm", "wit", "WebAssembly Interface Types"]
 repository = "https://github.com/ahalabs/witme"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
