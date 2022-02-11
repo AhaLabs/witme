@@ -1,5 +1,7 @@
 // This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (cargo-witgen v0.0.0) 
 
+type string-alias = string
+
 ///  Here is a doc example to generate in wit file
 record test-bis {
     coucou: string,
@@ -24,6 +26,8 @@ record init-args {
 type test-tuple = tuple<u64, string>
 
 test-option: function(other: list<u8>, number: u8, othernum: s32) -> option<tuple<string, u64>>
+
+has-mutable: function(s: string) -> string
 
 record has-hash-map {
     map: list<tuple<string,test-struct>>

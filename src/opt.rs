@@ -12,8 +12,7 @@ pub struct Opt {
 #[derive(Parser, Debug)]
 pub enum Command {
     /// Generate wit files
-    #[clap(alias = "gen")]
-    Generate {
+    Wit {
         /// Specify output file to generate wit definitions
         #[clap(long, short = 'o')]
         output: Option<PathBuf>,
@@ -34,5 +33,17 @@ pub enum Command {
         /// Generate TypeScript file from wit file
         #[clap(long, short = 't')]
         typescript: Option<PathBuf>,
+    },
+
+    /// Generate ts file from wit
+    Ts {
+      /// Specify input wit file
+      #[clap(long, short = 'i')]
+      input: PathBuf,
+
+      /// Specify output file to generate TS definitions
+      #[clap(long, short = 'o')]
+      output: Option<PathBuf>,
+
     },
 }

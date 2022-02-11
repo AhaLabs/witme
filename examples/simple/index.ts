@@ -74,28 +74,28 @@ export class Contract {
   
   constructor(public account: Account, public readonly contractId: string){}
   
-  test_simple(args: {array: Uint8Array}, options?: ViewFunctionOptions): Promise<string>{
+  test_simple(args: {array: Uint8Array}, options?: ViewFunctionOptions): Promise<string> {
     return this.account.viewFunction(this.contractId, "test_simple", args, options);
   }
-  use_string_alias(args: {s: StringAlias}, options?: ViewFunctionOptions): Promise<StringAlias>{
+  use_string_alias(args: {s: StringAlias}, options?: ViewFunctionOptions): Promise<StringAlias> {
     return this.account.viewFunction(this.contractId, "use_string_alias", args, options);
   }
-  test_tuple(args: {other: Uint8Array, test_struct: TestStruct, other_enum: TestEnum}, options?: ViewFunctionOptions): Promise<[string, bigint]>{
+  test_tuple(args: {other: Uint8Array, test_struct: TestStruct, other_enum: TestEnum}, options?: ViewFunctionOptions): Promise<[string, bigint]> {
     return this.account.viewFunction(this.contractId, "test_tuple", args, options);
   }
-  test_result(args: {other: Uint8Array, number: number, othernum: number}, options?: ViewFunctionOptions): Promise<Result<[string, bigint], string>>{
+  test_result(args: {other: Uint8Array, number: number, othernum: number}, options?: ViewFunctionOptions): Promise<Result<[string, bigint], string>> {
     return this.account.viewFunction(this.contractId, "test_result", args, options);
   }
-  test_option(args: {other: Uint8Array, number: number, othernum: number}, options?: ViewFunctionOptions): Promise<[string, bigint] | null>{
+  test_option(args: {other: Uint8Array, number: number, othernum: number}, options?: ViewFunctionOptions): Promise<[string, bigint] | null> {
     return this.account.viewFunction(this.contractId, "test_option", args, options);
   }
-  has_mutable(args: {s: string}, options?: ViewFunctionOptions): Promise<string>{
+  has_mutable(args: {s: string}, options?: ViewFunctionOptions): Promise<string> {
     return this.account.viewFunction(this.contractId, "has_mutable", args, options);
   }
-  test_array(args: {other: Uint8Array, number: number, othernum: number}, options?: ViewFunctionOptions): Promise<[string, bigint]>{
+  test_array(args: {other: Uint8Array, number: number, othernum: number}, options?: ViewFunctionOptions): Promise<[string, bigint]> {
     return this.account.viewFunction(this.contractId, "test_array", args, options);
   }
-  test_vec(args: {other: Uint8Array, number: number, othernum: number}, options?: ViewFunctionOptions): Promise<[string, bigint]>{
+  test_vec(args: {other: Uint8Array, number: number, othernum: number}, options?: ViewFunctionOptions): Promise<[string, bigint]> {
     return this.account.viewFunction(this.contractId, "test_vec", args, options);
   }
 }

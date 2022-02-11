@@ -17,9 +17,7 @@ clap = "=3.0.0-beta.5"
 clap_derive = "=3.0.0-beta.5"
 glob = "0.3.0"
 once_cell = "1.8.0"
-aha-wit-parser = {git="https://github.com/ahalabs/wit-bindgen", rev="7cff7a3173d82ac14313d972737c476790fff217"}
-wit-bindgen-gen-js-near = {git="https://github.com/ahalabs/wit-bindgen", rev="7cff7a3173d82ac14313d972737c476790fff217"}
-aha-wit-bindgen-gen-core = {git="https://github.com/ahalabs/wit-bindgen", rev="7cff7a3173d82ac14313d972737c476790fff217"}
+wit-bindgen-gen-ts-near = "0.0.0"
 
 
 [workspace]
