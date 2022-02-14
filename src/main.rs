@@ -132,6 +132,6 @@ fn write_file(path: &Path, contents: &str) -> Result<()> {
 }
 
 fn ts_from_wit_file(input: &Path, out_dir: &Path) -> Result<()> {
-    let content = String::from_utf8(fs::read(&*input)?)?;
+    let content = String::from_utf8(fs::read(input)?)?;
     generate_typescript(&out_dir.to_path_buf(), &content)
 }
