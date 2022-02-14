@@ -2,7 +2,6 @@
 #![doc = include_str!("../README.md")]
 
 use anyhow::{bail, Context, Result};
-use cargo_metadata::MetadataCommand;
 use clap::{crate_version, FromArgMatches, IntoApp};
 use once_cell::sync::OnceCell;
 use wit_bindgen_gen_ts_near::generate_typescript;
@@ -39,7 +38,7 @@ fn main() -> Result<()> {
 fn run_generate(cli_args: opt::Command) -> Result<()> {
     match cli_args {
         opt::Command::Ts { input, output } => {
-            ts_from_wit_file(&input, &output.unwrap_or(PathBuf::from(".")))
+            ts_from_wit_file(&input, &output.unwrap_or_else(|| PathBuf::from(".")))
         }
         opt::Command::Wit {
             args,
@@ -106,36 +105,33 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             if let Some(ts_path) = typescript {
                 generate_typescript(&ts_path, &wit_str)?;
             }
-            write_file(&filename, &wit_str, "wit")
+            write_file(&filename, &wit_str)
         }
     }
 }
 
 pub(crate) fn get_target_dir() -> PathBuf {
-    let metadata = MetadataCommand::new()
+    let metadata = cargo_metadata::MetadataCommand::new()
         .exec()
         .expect("cannot fetch cargo metadata");
 
     metadata.target_directory.join("witgen").into()
 }
 
-fn write_file(path: &PathBuf, contents: &str, context_str: &str) -> Result<()> {
+fn write_file(path: &Path, contents: &str) -> Result<()> {
     let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
         .create(true)
         .open(path)
-        .expect(&format!(
-            "cannot create file to generate {}",
-            context_str.to_string()
-        ));
+        .expect("cannot create file to generate wit");
     file.write_all(contents.as_bytes())
         .context("cannot write to file")?;
     file.flush().context("cannot flush file")?;
     Ok(())
 }
 
-fn ts_from_wit_file(input: &PathBuf, out_dir: &PathBuf) -> Result<()> {
+fn ts_from_wit_file(input: &Path, out_dir: &Path) -> Result<()> {
     let content = String::from_utf8(fs::read(&*input)?)?;
-    generate_typescript(&out_dir, &content)
+    generate_typescript(&out_dir.to_path_buf(), &content)
 }
