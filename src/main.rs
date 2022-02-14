@@ -23,9 +23,7 @@ mod opt;
 static TARGET_PATH: OnceCell<PathBuf> = OnceCell::new();
 
 fn main() -> Result<()> {
-    let target_dir = TARGET_PATH.get_or_init(get_target_dir);
     let args = env::args_os();
-
     let matches = Opt::into_app()
         .version(crate_version!())
         .bin_name("witme")
@@ -35,15 +33,10 @@ fn main() -> Result<()> {
     let matches =
         Opt::from_arg_matches(&matches).ok_or_else(|| anyhow::anyhow!("Command not found"))?;
 
-    run_generate(target_dir, matches.command)
+    run_generate(matches.command)
 }
 
-fn run_generate(target_dir: &Path, cli_args: opt::Command) -> Result<()> {
-    anyhow::ensure!(
-        Path::new("Cargo.toml").exists(),
-        r#"Failed to read `Cargo.toml`.
-  hint: This command only works in the manifest directory of a Cargo package."#
-    );
+fn run_generate(cli_args: opt::Command) -> Result<()> {
     match cli_args {
         opt::Command::Ts { input, output } => {
             ts_from_wit_file(&input, &output.unwrap_or(PathBuf::from(".")))
@@ -55,6 +48,12 @@ fn run_generate(target_dir: &Path, cli_args: opt::Command) -> Result<()> {
             prefix_string,
             typescript,
         } => {
+            let target_dir = TARGET_PATH.get_or_init(get_target_dir);
+            anyhow::ensure!(
+                Path::new("Cargo.toml").exists(),
+                r#"Failed to read `Cargo.toml`.
+    hint: This command only works in the manifest directory of a Cargo package."#
+            );
             let check_status = Command::new("cargo")
                 .arg("rustc")
                 .args(args)
