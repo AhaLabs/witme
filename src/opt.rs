@@ -41,7 +41,11 @@ pub enum Command {
       #[clap(long, short = 'i')]
       input: PathBuf,
 
-      /// Specify output file to generate TS definitions
+      /// Specify output file or directory to write the generated TS
+      /// 
+      /// `-o ./dist` --> `./dist/index.ts`
+      /// 
+      /// `-o ./dist/file.ts` --> `./dist/file.ts
       #[clap(long, short = 'o')]
       output: Option<PathBuf>,
 
