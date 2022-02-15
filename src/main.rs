@@ -17,6 +17,7 @@ use std::{
 
 use crate::opt::Opt;
 
+mod embeded;
 mod opt;
 
 static TARGET_PATH: OnceCell<PathBuf> = OnceCell::new();
@@ -46,6 +47,8 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             prefix_file,
             prefix_string,
             typescript,
+            sdk,
+            standards,
         } => {
             let target_dir = TARGET_PATH.get_or_init(get_target_dir);
             anyhow::ensure!(
@@ -77,8 +80,15 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
                 PathBuf::from(typescript.as_ref().map_or("witgen.wit", |_| "index.wit"))
             });
 
-            let mut wit_str = format!("// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (cargo-witgen v{}) \n\n", env!("CARGO_PKG_VERSION"));
+            let mut wit_str = format!("// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v{}) \n\n", env!("CARGO_PKG_VERSION"));
 
+            if sdk || standards {
+              wit_str.push_str(embeded::SDK);
+              if standards {
+                wit_str.push_str(embeded::STANDARDS);
+              }
+            }
+            
             if let Some(path) = prefix_file {
                 let prefix_file = String::from_utf8(read(path)?)?;
                 wit_str.push_str(&format!("{}\n\n", prefix_file));
