@@ -1,12 +1,22 @@
 use std::path::PathBuf;
-
 use clap::Parser;
 
 #[derive(Parser, Debug)]
-#[clap(author = "Benjamin Coenen <benjamin.coenen@hotmail.com>, Willem Wyndham <willem@ahalabs.dev>")]
-pub struct Opt {
+#[clap(
+    author = "Benjamin Coenen <benjamin.coenen@hotmail.com>, Willem Wyndham <willem@ahalabs.dev>"
+)]
+pub struct WitMe {
+    // #[clap(flatten)]
+    // global_opts: GlobalOpts,
     #[clap(subcommand)]
-    pub command: Command,
+    pub top_level_command: TopLevelCommand,
+}
+
+#[derive(Parser, Debug)]
+pub enum TopLevelCommand {
+    /// NEAR specific wit operations
+    #[clap(subcommand)]
+    Near(Command),
 }
 
 #[derive(Parser, Debug)]
@@ -14,7 +24,7 @@ pub enum Command {
     /// Generate wit files
     Wit {
         /// Specify output file to generate wit definitions
-        /// 
+        ///
         /// Default: './witgen.wit`
         #[clap(long, short = 'o')]
         output: Option<PathBuf>,
@@ -29,7 +39,7 @@ pub enum Command {
         prefix_file: Option<PathBuf>,
 
         /// Specify prefix string to copy into top of the generated wit file
-        /// 
+        ///
         /// `--prefix-string 'use * from "string.wit"'`
         #[clap(long, short = 's')]
         prefix_string: Option<String>,
@@ -37,7 +47,7 @@ pub enum Command {
         /// Generate TypeScript file from generated wit file in one step
         ///  
         /// `-t ./dist` --> `./dist/index.ts`
-        /// 
+        ///
         /// `-t ./dist/file.ts` --> `./dist/file.ts`
         #[clap(long, name = "file or directory", short = 't')]
         typescript: Option<PathBuf>,
@@ -54,17 +64,34 @@ pub enum Command {
 
     /// Generate ts file from wit
     Ts {
-      /// Specify input wit file
-      #[clap(long, short = 'i')]
-      input: PathBuf,
+        /// Specify input wit file
+        #[clap(long, short = 'i')]
+        input: PathBuf,
 
-      /// Specify output file or directory to write the generated TS
-      /// 
-      /// `-o ./dist` --> `./dist/index.ts`
-      /// 
-      /// `-o ./dist/file.ts` --> `./dist/file.`ts
-      #[clap(long, name= "file or directory", short = 'o')]
-      output: Option<PathBuf>,
-
+        /// Specify output file or directory to write the generated TS
+        ///
+        /// `-o ./dist` --> `./dist/index.ts`
+        ///
+        /// `-o ./dist/file.ts` --> `./dist/file.`ts
+        #[clap(long, name = "file or directory", short = 'o')]
+        output: Option<PathBuf>,
     },
 }
+
+// #[derive(Debug, Args)]
+// struct GlobalOpts {
+//     /// Color
+//     #[clap(long, arg_enum, global = true)]
+//     color: Color,
+//     // /// Verbosity level (can be specified multiple times)
+//     // #[clap(long, short, global = true, parse(from_occurrences))]
+//     // verbose: usize,
+//     //... other global options
+// }
+
+// #[derive(Clone, Display, Debug, ArgEnum)]
+// enum Color {
+//     Always,
+//     Auto,
+//     Never,
+// }
