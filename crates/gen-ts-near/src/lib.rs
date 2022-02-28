@@ -633,15 +633,14 @@ impl Generator for Ts {
             self.src.ts("}\n");
         }
 
-        
         if mem::take(&mut self.needs_ty_option) {
-          self.src
-          .ts("export type Option<T> = { tag: \"none\" } | { tag: \"some\", val; T };\n");
+            self.src
+                .ts("export type Option<T> = { tag: \"none\" } | { tag: \"some\", val; T };\n");
         }
         if mem::take(&mut self.needs_ty_result) {
-          self.src.ts(
-            "export type Result<T, E> = { tag: \"ok\", val: T } | { tag: \"err\", val: E };\n",
-          );
+            self.src.ts(
+                "export type Result<T, E> = { tag: \"ok\", val: T } | { tag: \"err\", val: E };\n",
+            );
         }
         let exports = mem::take(&mut self.src);
 
