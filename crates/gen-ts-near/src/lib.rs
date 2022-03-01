@@ -36,6 +36,7 @@ struct Imports {
 #[derive(Default)]
 struct Exports {
     freestanding_funcs: Vec<Source>,
+    arg_types: Vec<Source>,
     resource_funcs: BTreeMap<ResourceId, Vec<Source>>,
 }
 
@@ -89,18 +90,18 @@ impl Ts {
 
     fn print_ty(&mut self, iface: &Interface, ty: &Type) {
         match ty {
-            Type::U8
-            | Type::CChar
-            | Type::S8
-            | Type::U16
-            | Type::S16
-            | Type::U32
-            | Type::Usize
-            | Type::S32
-            | Type::F32
-            | Type::F64 => self.src.ts("number"),
+            Type::U8 => self.src.ts("u8"),
+            Type::S8 => self.src.ts("i8"),
+            Type::U16 => self.src.ts("u16"),
+            Type::S16 => self.src.ts("i16"),
+            Type::U32 => self.src.ts("u32"),
+            Type::Usize => self.src.ts("usize"),
+            Type::S32 => self.src.ts("i32"),
+            Type::F32 => self.src.ts("f32"),
+            Type::F64 => self.src.ts("f64"),
             Type::U64 => self.src.ts("u64"),
             Type::S64 => self.src.ts("i64"),
+            Type::CChar => self.src.ts("number"),
             Type::Char => self.src.ts("string"),
             Type::Handle(id) => self.src.ts(&iface.resources[*id].name.to_camel_case()),
             Type::Id(id) => {
@@ -223,15 +224,19 @@ impl Ts {
         }
     }
 
-    fn print_args(&mut self, iface: &Interface, func: &Function, param_start: usize) {
-        self.src.ts("(args: {\n");
-        let none: Option<String> = None;
-
-        let arg_fields: Vec<(&str, &Type, &Option<String>)> = func.params[param_start..]
+    fn print_args_type(&mut self, iface: &Interface, func: &Function, param_start: usize) {
+      let none: Option<String> = None;
+      let arg_fields: Vec<(&str, &Type, &Option<String>)> = func.params[param_start..]
             .iter()
             .map(|(name, ty)| (name.as_str(), ty, &none))
             .collect();
         self.print_fields(iface, arg_fields);
+    }
+
+    fn print_args(&mut self, iface: &Interface, func: &Function, param_start: usize) {
+        self.src.ts("(args: {\n");
+
+        self.print_args_type(iface, func, param_start);
         self.src.ts("}");
         if func.params.is_empty() {
             self.src.ts(" = {}");
@@ -350,7 +355,7 @@ impl Ts {
             self.src.ts(": ");
             let ty = iface.get_nullable_option(ty).unwrap_or(ty);
             self.print_ty(iface, ty);
-            self.src.ts(",\n");
+            self.src.ts(";\n");
         }
     }
 }
@@ -375,11 +380,74 @@ impl Generator for Ts {
         stringify?: (input: any) => any;
       }
 
-      /** 64 bit unsigned integer less than 2^53 -1 */
-      type u64 = number;
-      /** 64 bit signed integer less than 2^53 -1 */
-      type i64 = number;
-        ")
+/** 
+ * @minimum 0
+ * @maximum 18446744073709551615
+ * @asType integer
+ */
+type u64 = number;
+/** 
+ * @minimum -9223372036854775808
+ * @maximum 9223372036854775807
+ * @asType integer
+ */
+type i64 = number;
+
+/**
+* @minimum  0 
+* @maximum 255
+* @asType integer
+* */
+type u8 = number;
+/**
+ * @minimum  -128 
+ * @maximum 127
+ * @asType integer
+ * */
+  type i8 = number;
+/**
+ * @minimum  0 
+ * @maximum 65535
+ * @asType integer
+ * */
+  type u16 = number;
+/**
+ * @minimum -32768 
+ * @maximum 32767
+ * @asType integer
+ * */
+  type i16 = number;
+/**
+ * @minimum 0 
+ * @maximum 4294967295
+ * @asType integer
+ * */
+  type u32 = number;
+  /**
+ * @minimum 0 
+ * @maximum 4294967295
+ * @asType integer
+ * */
+  type usize = number;
+/**
+ * @minimum  -2147483648 
+ * @maximum 2147483647
+ * @asType integer
+ * */
+  type i32 = number;
+
+/**
+ * @minimum -3.40282347E+38
+ * @maximum 3.40282347E+38
+ */
+type f32 = number;
+
+/**
+ * @minimum -1.7976931348623157E+308
+ * @maximum 1.7976931348623157E+308
+ */
+type f64 = number;
+");
     }
 
     fn type_record(
@@ -393,9 +461,10 @@ impl Generator for Ts {
         self.docs(docs);
         if record.is_tuple() {
             self.src
-                .ts(&format!("export type {} = ", name.to_camel_case()));
+                .ts(&format!("type {} = ", name.to_camel_case()));
             self.print_tuple(iface, record);
             self.src.ts(";\n");
+            self.src.ts(&format!("export {{{}}};\n", name.to_camel_case()));
         } else if record.is_flags() {
             let repr = iface
                 .flags_repr(record)
@@ -501,17 +570,19 @@ impl Generator for Ts {
     fn type_alias(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
         self.docs(docs);
         self.src
-            .ts(&format!("export type {} = ", name.to_camel_case()));
+            .ts(&format!("type {} = ", name.to_camel_case()));
         self.print_ty(iface, ty);
         self.src.ts(";\n");
+        self.src.ts(&format!("export {{{}}};\n", name.to_camel_case()));
     }
 
     fn type_list(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
         self.docs(docs);
         self.src
-            .ts(&format!("export type {} = ", name.to_camel_case()));
+            .ts(&format!("type {} = ", name.to_camel_case()));
         self.print_list(iface, ty);
         self.src.ts(";\n");
+        self.src.ts(&format!("export {{{}}};\n", name.to_camel_case()));
     }
 
     fn type_pointer(
@@ -590,7 +661,19 @@ impl Generator for Ts {
                     .or_insert_with(Vec::new)
                     .push(func_body);
             }
-        }
+        };
+        let prev = mem::take(&mut self.src);
+        self.src.ts(&format!("export interface {} {{\n", func.name.to_camel_case()));
+        self.print_args_type(iface, func, 0);
+        self.src.ts("}\n");
+        let func_args = mem::replace(&mut self.src, prev);
+        let exports = self
+            .guest_exports
+            .entry(iface.name.to_string())
+            .or_insert_with(Exports::default);
+
+         exports.arg_types.push(func_args);
+         
     }
 
     fn finish_one(&mut self, iface: &Interface, files: &mut Files) {
@@ -627,6 +710,9 @@ impl Generator for Ts {
                 self.src.ts(&func.ts);
             }
             self.src.ts("}\n");
+            for args in exports.arg_types.iter() {
+              self.src.ts(&args.ts);
+          }
         }
 
         if mem::take(&mut self.needs_ty_option) {
