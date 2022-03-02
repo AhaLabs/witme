@@ -42,8 +42,8 @@ struct Exports {
 #[derive(Default, Debug, Clone)]
 #[cfg_attr(feature = "structopt", derive(structopt::StructOpt))]
 pub struct Opts {
-  #[cfg_attr(feature = "structopt", structopt(long = "no-typescript"))]
-  pub no_typescript: bool,
+    #[cfg_attr(feature = "structopt", structopt(long = "no-typescript"))]
+    pub no_typescript: bool,
 }
 
 impl Opts {
@@ -150,7 +150,6 @@ impl Ts {
         }
     }
 
-
     fn print_list(&mut self, iface: &Interface, ty: &Type) {
         if let Some(r) = self.hash_map(iface, ty) {
             self.src.ts("Record<");
@@ -172,7 +171,6 @@ impl Ts {
             }
         }
     }
-
 
     fn print_tuple(&mut self, iface: &Interface, record: &Record) {
         self.src.ts("[");
@@ -216,7 +214,7 @@ impl Ts {
             .lines()
             .filter(|line| *line != "change" && *line != "view")
             .collect::<Vec<&str>>();
-        if lines.len() > 0 {
+        if !lines.is_empty() {
             self.src.ts("/**\n");
             for line in lines {
                 self.src.ts(&format!("* {}\n", line));
@@ -235,7 +233,7 @@ impl Ts {
             .collect();
         self.print_fields(iface, arg_fields);
         self.src.ts("}");
-        if func.params.len() == 0 {
+        if func.params.is_empty() {
             self.src.ts(" = {}");
         };
         self.src.ts(", options?: ");
@@ -277,7 +275,7 @@ impl Ts {
                 self.src.ts(&iface.name.to_mixed_case());
                 self.src.ts(": ");
                 self.src.ts(&iface.name.to_camel_case());
-                if func.params.len() > 0 {
+                if !func.params.is_empty() {
                     self.src.ts(", ");
                 }
                 0
@@ -350,8 +348,8 @@ impl Ts {
                 self.src.ts("?");
             }
             self.src.ts(": ");
-            let ty= iface.get_nullable_option(ty).unwrap_or(ty);
-            self.print_ty(iface, &ty);
+            let ty = iface.get_nullable_option(ty).unwrap_or(ty);
+            self.print_ty(iface, ty);
             self.src.ts(",\n");
         }
     }
@@ -359,7 +357,6 @@ impl Ts {
 
 impl Generator for Ts {
     fn preprocess_one(&mut self, iface: &Interface, dir: Direction) {
-      println!("preprocess");
         let variant = Self::abi_variant(dir);
         self.sizes.fill(variant, iface);
         self.in_import = variant == AbiVariant::GuestImport;
@@ -590,7 +587,7 @@ impl Generator for Ts {
                 exports
                     .resource_funcs
                     .entry(*resource)
-                    .or_insert(Vec::new())
+                    .or_insert_with(Vec::new)
                     .push(func_body);
             }
         }
@@ -621,7 +618,6 @@ impl Generator for Ts {
             }
         }
         let imports = mem::take(&mut self.src);
-        println!("finish_one");
 
         for (_module, exports) in mem::take(&mut self.guest_exports) {
             self.src.ts("\nexport class Contract {
@@ -686,15 +682,13 @@ impl Source {
 
 fn is_change(func: &Function) -> bool {
     if let Some(docs) = &func.docs.contents {
-        let x = docs
-            .split("\n")
+        let mut x = docs
+            .split('\n')
             .filter(|s| *s == "change")
-            .collect::<Vec<_>>();
-        if x.len() == 1 {
+            .peekable();
+        if x.peek().is_some() {
             return true;
         }
     }
     false
 }
-
-

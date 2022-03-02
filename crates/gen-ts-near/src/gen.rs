@@ -1,14 +1,13 @@
-use std::path::PathBuf;
+use std::path::Path;
 
 use crate::Ts;
 use anyhow::{Context, Result};
 use wit_bindgen_gen_core::{wit_parser::Interface, Files, Generator};
 
-pub fn generate_typescript(ts_path: &PathBuf, wit_str: &str) -> Result<()> {
+pub fn generate_typescript(path: &Path, wit_str: &str) -> Result<()> {
     let mut generator: Box<dyn Generator> = Box::new(Ts::new());
     let mut files = Files::default();
-    let path = ts_path.as_path();
-    let path_str = ts_path.to_str().unwrap();
+    let path_str = path.to_str().unwrap();
     let (dir, file_stem) = if path_str.ends_with(".ts") {
         (
             path.parent().unwrap(),
@@ -33,7 +32,7 @@ pub fn generate_typescript(ts_path: &PathBuf, wit_str: &str) -> Result<()> {
 }
 
 fn parse(name: &str, wit_str: &str) -> Result<Interface> {
-    match Interface::parse(name, &wit_str) {
+    match Interface::parse(name, wit_str) {
         i @ Ok(_) => i,
         e @ Err(_) => {
             eprintln!("You probably need to add a `witgen` macro to the missing type");

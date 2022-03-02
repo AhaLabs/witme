@@ -10,3 +10,5 @@ Cargo.lock
 **/*.rs.bk
 
 crates/gen-ts-near/node_modules/
+
+examples/simple/node_modules/

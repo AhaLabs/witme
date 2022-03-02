@@ -15,9 +15,9 @@ enum MyEnum {
 /// Example of using generating an enum, e.i. a variant with unit fields
 #[witgen]
 enum Color {
-  Red,
-  Green,
-  Blue,
+    Red,
+    Green,
+    Blue,
 }
 
 #[witgen]
