@@ -376,8 +376,10 @@ impl Generator for Ts {
           walletCallbackUrl?: string;
       }
       export interface ViewFunctionOptions {
-        parse?: (response: Uint8Array) => any;
-        stringify?: (input: any) => any;
+        // TODO currently JSON schema generator doesn't like function types
+        parse?: any;
+        // TODO currently JSON schema generator doesn't like function types
+        stringify?: any;
       }
 
 /** 
@@ -461,10 +463,9 @@ type f64 = number;
         self.docs(docs);
         if record.is_tuple() {
             self.src
-                .ts(&format!("type {} = ", name.to_camel_case()));
+                .ts(&format!("export type {} = ", name.to_camel_case()));
             self.print_tuple(iface, record);
             self.src.ts(";\n");
-            self.src.ts(&format!("export {{{}}};\n", name.to_camel_case()));
         } else if record.is_flags() {
             let repr = iface
                 .flags_repr(record)
@@ -570,19 +571,17 @@ type f64 = number;
     fn type_alias(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
         self.docs(docs);
         self.src
-            .ts(&format!("type {} = ", name.to_camel_case()));
+            .ts(&format!("export type {} = ", name.to_camel_case()));
         self.print_ty(iface, ty);
         self.src.ts(";\n");
-        self.src.ts(&format!("export {{{}}};\n", name.to_camel_case()));
     }
 
     fn type_list(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
         self.docs(docs);
         self.src
-            .ts(&format!("type {} = ", name.to_camel_case()));
+            .ts(&format!("export type {} = ", name.to_camel_case()));
         self.print_list(iface, ty);
         self.src.ts(";\n");
-        self.src.ts(&format!("export {{{}}};\n", name.to_camel_case()));
     }
 
     fn type_pointer(
@@ -663,6 +662,7 @@ type f64 = number;
             }
         };
         let prev = mem::take(&mut self.src);
+        self.src.ts(&format!("/** @contractMethod {} */\n", if is_change(func) { "change"} else {"view"}));
         self.src.ts(&format!("export interface {} {{\n", func.name.to_camel_case()));
         self.print_args_type(iface, func, 0);
         self.src.ts("}\n");

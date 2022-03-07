@@ -18,7 +18,7 @@ type base64-vec-u8 = string
 ///  Raw type for duration in nanoseconds
 type duration = u64
 
-///  @pattern ^(([a-z\\d]+[\\-_])*[a-z\\d]+\\.)*([a-z\\d]+[\\-_])*[a-z\\d]+$
+///  @pattern ^(([a-z\d]+[\-_])*[a-z\d]+\.)*([a-z\d]+[\-_])*[a-z\d]+$
 type account-id = string
 
 ///  Public key in a binary format with base58 string serialization with human-readable curve.
