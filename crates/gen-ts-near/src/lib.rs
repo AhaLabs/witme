@@ -225,8 +225,8 @@ impl Ts {
     }
 
     fn print_args_type(&mut self, iface: &Interface, func: &Function, param_start: usize) {
-      let none: Option<String> = None;
-      let arg_fields: Vec<(&str, &Type, &Option<String>)> = func.params[param_start..]
+        let none: Option<String> = None;
+        let arg_fields: Vec<(&str, &Type, &Option<String>)> = func.params[param_start..]
             .iter()
             .map(|(name, ty)| (name.as_str(), ty, &none))
             .collect();
@@ -662,8 +662,18 @@ type f64 = number;
             }
         };
         let prev = mem::take(&mut self.src);
-        self.src.ts(&format!("/** @contractMethod {} */\n", if is_change(func) { "change"} else {"view"}));
-        self.src.ts(&format!("export interface {} {{\n", func.name.to_camel_case()));
+        let func_type = if is_change(func) { "change" } else { "view" };
+        let docs = func
+            .docs
+            .contents
+            .as_ref()
+            .map(|d| d.to_string())
+            .unwrap_or_default();
+        self.doc_str(&Some(format!("{docs}\n@contractMethod {func_type}\n")));
+        self.src.ts(&format!(
+            "export interface {} {{\n",
+            func.name.to_camel_case()
+        ));
         self.print_args_type(iface, func, 0);
         self.src.ts("}\n");
         let func_args = mem::replace(&mut self.src, prev);
@@ -672,8 +682,7 @@ type f64 = number;
             .entry(iface.name.to_string())
             .or_insert_with(Exports::default);
 
-         exports.arg_types.push(func_args);
-         
+        exports.arg_types.push(func_args);
     }
 
     fn finish_one(&mut self, iface: &Interface, files: &mut Files) {
@@ -711,8 +720,8 @@ type f64 = number;
             }
             self.src.ts("}\n");
             for args in exports.arg_types.iter() {
-              self.src.ts(&args.ts);
-          }
+                self.src.ts(&args.ts);
+            }
         }
 
         if mem::take(&mut self.needs_ty_option) {
@@ -768,10 +777,7 @@ impl Source {
 
 fn is_change(func: &Function) -> bool {
     if let Some(docs) = &func.docs.contents {
-        let mut x = docs
-            .split('\n')
-            .filter(|s| *s == "change")
-            .peekable();
+        let mut x = docs.split('\n').filter(|s| *s == "change").peekable();
         if x.peek().is_some() {
             return true;
         }
