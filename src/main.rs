@@ -69,7 +69,7 @@ fn execute_cargo(cargo: &str, args: &[String]) -> Result<Paths> {
         .to_str()
         .context("CARGO_TARGET_DIR not valid UTF-8")?;
 
-    glob::glob(&pattern)
+    glob::glob(pattern)
         .with_context(|| format!("failed to to find matches with pattern: {}", &pattern))
 }
 

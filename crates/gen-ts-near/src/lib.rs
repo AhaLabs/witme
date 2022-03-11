@@ -593,10 +593,12 @@ type f64 = number;
         ty: &Type,
         docs: &Docs,
     ) {
+        #[allow(clippy::drop_copy)]
         drop((iface, _id, name, const_, ty, docs));
     }
 
     fn type_builtin(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+        #[allow(clippy::drop_copy)]
         drop((iface, _id, name, ty, docs));
     }
 
