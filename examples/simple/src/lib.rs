@@ -12,6 +12,14 @@ enum MyEnum {
     TupleVariant(String, i32),
 }
 
+/// Example of using generating an enum, e.i. a variant with unit fields
+#[witgen]
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
+
 #[witgen]
 fn test_simple(array: Vec<u8>) -> String {
     String::from("test")

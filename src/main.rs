@@ -3,6 +3,7 @@
 
 use anyhow::{bail, Context, Result};
 use clap::{crate_version, FromArgMatches, IntoApp};
+use glob::Paths;
 use once_cell::sync::OnceCell;
 use wit_bindgen_gen_ts_near::generate_typescript;
 
@@ -15,7 +16,7 @@ use std::{
     time::SystemTime,
 };
 
-use crate::opt::Opt;
+use crate::opt::WitMe;
 
 mod embeded;
 mod opt;
@@ -24,16 +25,52 @@ static TARGET_PATH: OnceCell<PathBuf> = OnceCell::new();
 
 fn main() -> Result<()> {
     let args = env::args_os();
-    let matches = Opt::into_app()
+    let matches = WitMe::into_app()
         .version(crate_version!())
         .bin_name("witme")
         // .setting(AppSettings::NoBinaryName)
         .get_matches_from(args);
 
-    let matches =
-        Opt::from_arg_matches(&matches).ok_or_else(|| anyhow::anyhow!("Command not found"))?;
+    let witme =
+        WitMe::from_arg_matches(&matches).ok_or_else(|| anyhow::anyhow!("Command not found"))?;
 
-    run_generate(matches.command)
+    match witme.top_level_command {
+        opt::TopLevelCommand::Near(command) => run_generate(command),
+    }
+}
+
+fn execute_cargo(cargo: &str, args: &[String]) -> Result<Paths> {
+    let target_dir = TARGET_PATH.get_or_init(get_target_dir);
+    anyhow::ensure!(
+        Path::new("Cargo.toml").exists(),
+        r#"Failed to read `Cargo.toml`.
+    hint: This command only works in the manifest directory of a Cargo package."#
+    );
+    let check_status = Command::new(cargo)
+        .arg("rustc")
+        .args(args)
+        .arg("--")
+        .arg("--emit")
+        .arg("dep-info,metadata")
+        // set an always-changing cfg so we can consistently trigger recompile
+        .arg("--cfg")
+        .arg(format!(
+            "__witgen_recompile_trigger=\"{}\"",
+            SystemTime::UNIX_EPOCH.elapsed()?.as_millis()
+        ))
+        .env("WITGEN_ENABLED", "true")
+        .status()?;
+
+    if !check_status.success() {
+        bail!("`cargo check` failed with status: {}", check_status);
+    }
+    let pattern = target_dir.join("*.wit");
+    let pattern = pattern
+        .to_str()
+        .context("CARGO_TARGET_DIR not valid UTF-8")?;
+
+    glob::glob(pattern)
+        .with_context(|| format!("failed to to find matches with pattern: {}", &pattern))
 }
 
 fn run_generate(cli_args: opt::Command) -> Result<()> {
@@ -50,32 +87,6 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             sdk,
             standards,
         } => {
-            let target_dir = TARGET_PATH.get_or_init(get_target_dir);
-            anyhow::ensure!(
-                Path::new("Cargo.toml").exists(),
-                r#"Failed to read `Cargo.toml`.
-    hint: This command only works in the manifest directory of a Cargo package."#
-            );
-            let check_status = Command::new("cargo")
-                .arg("rustc")
-                .args(args)
-                .arg("--")
-                .arg("--emit")
-                .arg("dep-info,metadata")
-                // set an always-changing cfg so we can consistently trigger recompile
-                .arg("--cfg")
-                .arg(format!(
-                    "__witgen_recompile_trigger=\"{}\"",
-                    SystemTime::UNIX_EPOCH.elapsed()?.as_millis()
-                ))
-                .env("WITGEN_ENABLED", "true")
-                .status()?;
-
-            if !check_status.success() {
-                bail!("`cargo check` failed with status: {}", check_status);
-            }
-
-            let pattern = target_dir.join("*.wit");
             let filename = output.unwrap_or_else(|| {
                 PathBuf::from(typescript.as_ref().map_or("witgen.wit", |_| "index.wit"))
             });
@@ -83,12 +94,12 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             let mut wit_str = format!("// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v{}) \n\n", env!("CARGO_PKG_VERSION"));
 
             if sdk || standards {
-              wit_str.push_str(embeded::SDK);
-              if standards {
-                wit_str.push_str(embeded::STANDARDS);
-              }
+                wit_str.push_str(embeded::SDK);
+                if standards {
+                    wit_str.push_str(embeded::STANDARDS);
+                }
             }
-            
+
             if let Some(path) = prefix_file {
                 let prefix_file = String::from_utf8(read(path)?)?;
                 wit_str.push_str(&format!("{}\n\n", prefix_file));
@@ -97,11 +108,9 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
                 wit_str.push_str(&format!("{}\n\n", prefix));
             }
 
-            for path in glob::glob(
-                pattern
-                    .to_str()
-                    .context("CARGO_TARGET_DIR not valid UTF-8")?,
-            )? {
+            let paths = execute_cargo("cargo", &args)?;
+
+            for path in paths {
                 let path = path?;
                 let mut content = fs::read(&*path)?;
                 content.push(b'\n');
@@ -121,11 +130,12 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
 }
 
 pub(crate) fn get_target_dir() -> PathBuf {
-    let metadata = cargo_metadata::MetadataCommand::new()
+    cargo_metadata::MetadataCommand::new()
         .exec()
-        .expect("cannot fetch cargo metadata");
-
-    metadata.target_directory.join("witgen").into()
+        .expect("cannot fetch cargo metadata")
+        .target_directory
+        .join("witgen")
+        .into()
 }
 
 fn write_file(path: &Path, contents: &str) -> Result<()> {
