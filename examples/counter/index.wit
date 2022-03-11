@@ -1,0 +1,43 @@
+// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v0.1.0) 
+
+///  Returns 8-bit signed integer of the counter value.
+/// 
+///  This must match the type from our struct's 'val' defined above.
+/// 
+///  Note, the parameter is `&self` (without being mutable) meaning it doesn't modify state.
+///  In the frontend (/src/main.js) this is added to the "viewMethods" array
+///  using near-cli we can call this by:
+/// 
+///  ```bash
+///  near view counter.YOU.testnet get_num
+///  ```
+get-num: function() -> s8
+
+
+///  Reset to zero.
+///  change
+reset: function()
+
+///  Decrement (subtract from) the counter.
+/// 
+///  In (/src/main.js) this is also added to the "changeMethods" array
+///  using near-cli we can call this by:
+/// 
+///  ```bash
+///  near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
+///  ```
+///  change
+decrement: function()
+
+///  Increment the counter.
+/// 
+///  Note, the parameter is "&mut self" as this function modifies state.
+///  In the frontend (/src/main.js) this is added to the "changeMethods" array
+///  using near-cli we can call this by:
+/// 
+///  ```bash
+///  near call counter.YOU.testnet increment --accountId donation.YOU.testnet
+///  ```
+///  change
+increment: function()
+
