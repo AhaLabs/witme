@@ -87,9 +87,7 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             sdk,
             standards,
         } => {
-            let filename = output.unwrap_or_else(|| {
-                PathBuf::from(typescript.as_ref().map_or("witgen.wit", |_| "index.wit"))
-            });
+            let filename = output;
 
             let mut wit_str = format!("// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v{}) \n\n", env!("CARGO_PKG_VERSION"));
 
@@ -100,11 +98,12 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
                 }
             }
 
-            if let Some(path) = prefix_file {
-                let prefix_file = String::from_utf8(read(path)?)?;
-                wit_str.push_str(&format!("{}\n\n", prefix_file));
+            for path in prefix_file {
+              let prefix_file = String::from_utf8(read(path)?)?;
+              wit_str.push_str(&format!("{}\n\n", prefix_file));
             }
-            if let Some(prefix) = prefix_string {
+            
+            for prefix in prefix_string {
                 wit_str.push_str(&format!("{}\n\n", prefix));
             }
 

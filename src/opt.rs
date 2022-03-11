@@ -24,10 +24,8 @@ pub enum Command {
     /// Generate wit files
     Wit {
         /// Specify output file to generate wit definitions
-        ///
-        /// Default: './witgen.wit`
-        #[clap(long, short = 'o')]
-        output: Option<PathBuf>,
+        #[clap(long, short = 'o', default_value = "index.wit")]
+        output: PathBuf,
 
         /// Arguments to be passed to `cargo rustc ...`.
         /// Can mostly ignore.
@@ -36,13 +34,13 @@ pub enum Command {
 
         /// Specify prefix file to copy into top of the generated wit file
         #[clap(long, name = "path to wit", short = 'p')]
-        prefix_file: Option<PathBuf>,
+        prefix_file: Vec<PathBuf>,
 
         /// Specify prefix string to copy into top of the generated wit file
         ///
         /// `--prefix-string 'use * from "string.wit"'`
         #[clap(long, short = 's')]
-        prefix_string: Option<String>,
+        prefix_string: Vec<String>,
 
         /// Generate TypeScript file from generated wit file in one step
         ///  
