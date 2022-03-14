@@ -123,6 +123,7 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             }
             write_file(&filename, &wit_str)
         }
+        opt::Command::Json {input, out_dir} => generate_json_schema(&input, &out_dir)
     }
 }
 
@@ -151,4 +152,19 @@ fn write_file(path: &Path, contents: &str) -> Result<()> {
 fn ts_from_wit_file(input: &Path, out_dir: &Path) -> Result<()> {
     let content = String::from_utf8(fs::read(input)?)?;
     generate_typescript(&out_dir.to_path_buf(), &content)
+}
+
+fn generate_json_schema(input: &Path, out_dir: &Path) -> Result<()> {
+  Command::new("npx")
+        .arg("ts-json-schema-generator")
+        .arg("-p")
+        .arg(input)
+        .arg("--validation-keywords")
+        .arg("contractMethod")
+        .arg("--no-type-check")
+        .arg("-o")
+        .arg(out_dir.join("index.schema.json"))
+        .output()
+        .expect("failed to execute process");
+  Ok(())
 }

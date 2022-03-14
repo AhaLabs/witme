@@ -61,25 +61,17 @@ pub enum Command {
         input: PathBuf,
 
         /// Specify output directory to write the generated TS
-        #[clap(long, name = "directory", short = 'o', default_value = ".")]
+        #[clap(long, name = "directory", short = 'o', default_value = "./ts")]
         output: PathBuf,
     },
+    /// Generate a json schema from ts
+    Json {
+        /// generate a JSON schema for given ts file
+        #[clap(long, short = 'i', default_value = "ts/index.ts")]
+        input: PathBuf,
+
+        /// output for JSON schema
+        #[clap(long, name = "directory", short = 'o', default_value = ".")]
+        out_dir: PathBuf,
+    }
 }
-
-// #[derive(Debug, Args)]
-// struct GlobalOpts {
-//     /// Color
-//     #[clap(long, arg_enum, global = true)]
-//     color: Color,
-//     // /// Verbosity level (can be specified multiple times)
-//     // #[clap(long, short, global = true, parse(from_occurrences))]
-//     // verbose: usize,
-//     //... other global options
-// }
-
-// #[derive(Clone, Display, Debug, ArgEnum)]
-// enum Color {
-//     Always,
-//     Auto,
-//     Never,
-// }
