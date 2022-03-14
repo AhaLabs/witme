@@ -18,17 +18,6 @@ get-num: function() -> s8
 ///  change
 reset: function()
 
-///  Decrement (subtract from) the counter.
-/// 
-///  In (/src/main.js) this is also added to the "changeMethods" array
-///  using near-cli we can call this by:
-/// 
-///  ```bash
-///  near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
-///  ```
-///  change
-decrement: function()
-
 ///  Increment the counter.
 /// 
 ///  Note, the parameter is "&mut self" as this function modifies state.
@@ -40,4 +29,12 @@ decrement: function()
 ///  ```
 ///  change
 increment: function()
+
+///  Decrement (subtract from) the counter.
+/// 
+///  ```bash
+///  near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
+///  ```
+///  change
+decrement: function()
 

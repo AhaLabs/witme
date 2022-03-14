@@ -36,9 +36,11 @@ type public-key = string
 ///  Raw type for timestamp in nanoseconds
 type timestamp = u64
 
-///  change
-set-status: function(message: string)
-
+///  Retreive a message for a given account id
 get-status: function(account-id: account-id) -> option<string>
 
+
+///  Store a message for current signer account
+///  change
+set-status: function(message: string)
 

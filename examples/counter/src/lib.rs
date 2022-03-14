@@ -9,8 +9,7 @@
 //! [reset]: struct.Counter.html#method.reset
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{env, near_bindgen, log};
-
+use near_sdk::{env, log, near_bindgen};
 
 // add the following attributes to prepare your code for serialization and invocation on the blockchain
 // More built-in Rust attributes here: https://doc.rust-lang.org/reference/attributes.html#built-in-attributes-index
@@ -35,7 +34,7 @@ impl Counter {
     /// near view counter.YOU.testnet get_num
     /// ```
     pub fn get_num(&self) -> i8 {
-        return self.val;
+        self.val
     }
 
     /// Increment the counter.
@@ -58,9 +57,6 @@ impl Counter {
     }
 
     /// Decrement (subtract from) the counter.
-    ///
-    /// In (/src/main.js) this is also added to the "changeMethods" array
-    /// using near-cli we can call this by:
     ///
     /// ```bash
     /// near call counter.YOU.testnet decrement --accountId donation.YOU.testnet

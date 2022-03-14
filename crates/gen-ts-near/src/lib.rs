@@ -236,15 +236,13 @@ impl Ts {
     fn print_args(&mut self, iface: &Interface, func: &Function, param_start: usize) {
         self.src.ts("(args");
         if func.params.is_empty() {
-          self.src.ts(" = {}");
+            self.src.ts(" = {}");
         } else {
-          self.src.ts(": {\n");
-          self.print_args_type(iface, func, param_start);
-          self.src.ts("}");
+            self.src.ts(": {\n");
+            self.print_args_type(iface, func, param_start);
+            self.src.ts("}");
         }
-        if func.params.is_empty() {
-            
-        };
+        if func.params.is_empty() {};
         self.src.ts(", options?: ");
         self.src.ts(if is_change(func) {
             "ChangeMethodOptions"
@@ -369,91 +367,7 @@ impl Generator for Ts {
         let variant = Self::abi_variant(dir);
         self.sizes.fill(variant, iface);
         self.in_import = variant == AbiVariant::GuestImport;
-        self.src
-            .ts("import { Account, transactions, providers, DEFAULT_FUNCTION_CALL_GAS } from 'near-api-js';\n\n");
-        self.src.ts("
-        import BN from 'bn.js';
-        export interface ChangeMethodOptions {
-          gas?: BN;
-          attachedDeposit?: BN;
-          walletMeta?: string;
-          walletCallbackUrl?: string;
-      }
-      export interface ViewFunctionOptions {
-        // TODO currently JSON schema generator doesn't like function types
-        parse?: any;
-        // TODO currently JSON schema generator doesn't like function types
-        stringify?: any;
-      }
-
-/** 
- * @minimum 0
- * @maximum 18446744073709551615
- * @asType integer
- */
-export type u64 = number;
-/** 
- * @minimum -9223372036854775808
- * @maximum 9223372036854775807
- * @asType integer
- */
-export type i64 = number;
-
-/**
-* @minimum  0 
-* @maximum 255
-* @asType integer
-* */
-export type u8 = number;
-/**
- * @minimum  -128 
- * @maximum 127
- * @asType integer
- * */
-export type i8 = number;
-/**
- * @minimum  0 
- * @maximum 65535
- * @asType integer
- * */
-export type u16 = number;
-/**
- * @minimum -32768 
- * @maximum 32767
- * @asType integer
- * */
-export type i16 = number;
-/**
- * @minimum 0 
- * @maximum 4294967295
- * @asType integer
- * */
-export type u32 = number;
-  /**
- * @minimum 0 
- * @maximum 4294967295
- * @asType integer
- * */
-export type usize = number;
-/**
- * @minimum  -2147483648 
- * @maximum 2147483647
- * @asType integer
- * */
-export type i32 = number;
-
-/**
- * @minimum -3.40282347E+38
- * @maximum 3.40282347E+38
- */
-export type f32 = number;
-
-/**
- * @minimum -1.7976931348623157E+308
- * @maximum 1.7976931348623157E+308
- */
-export type f64 = number;
-");
+        self.add_preamble()
     }
 
     fn type_record(
@@ -716,11 +630,12 @@ export type f64 = number;
             }
         }
         let imports = mem::take(&mut self.src);
-
         for (_module, exports) in mem::take(&mut self.guest_exports) {
-            self.src.ts("\nexport class Contract {
+            self.src.ts(
+                "\nexport class Contract {
                   
-                  constructor(public account: Account, public readonly contractId: string){}\n\n");
+                  constructor(public account: Account, public readonly contractId: string){}\n\n",
+            );
             for func in exports.freestanding_funcs.iter() {
                 self.src.ts(&func.ts);
             }
@@ -747,6 +662,7 @@ export type f64 = number;
         let src = mem::take(&mut self.src);
         let name = iface.name.to_kebab_case();
         files.push(&format!("{}.ts", name), src.ts.as_bytes());
+        files.push("helper.ts", HELPER.as_bytes());
     }
 
     fn finish_all(&mut self, _files: &mut Files) {
@@ -759,6 +675,28 @@ impl Ts {
         iface
             .get_record(ty)
             .filter(|r| r.is_tuple() && r.fields.len() == 2)
+    }
+    fn add_preamble(&mut self) {
+        self.src.ts(
+"import {
+  Account,
+  transactions,
+  providers,
+  DEFAULT_FUNCTION_CALL_GAS,
+  u8,
+  i8,
+  u16,
+  i16,
+  u32,
+  i32,
+  u64,
+  i64,
+  f32,
+  f64,
+  BN,
+  ChangeMethodOptions,
+  ViewFunctionOptions,
+} from './helper';\n\n");
     }
 }
 
@@ -790,3 +728,92 @@ fn is_change(func: &Function) -> bool {
     }
     false
 }
+
+const HELPER: &str = "
+//@ts-ignore for ts-json-schema-generator
+export { Account, transactions, providers, DEFAULT_FUNCTION_CALL_GAS } from 'near-api-js';
+//@ts-ignore for ts-json-schema-generator
+import BN from 'bn.js';
+export {BN};
+
+export interface ChangeMethodOptions {
+  gas?: BN;
+  attachedDeposit?: BN;
+  walletMeta?: string;
+  walletCallbackUrl?: string;
+}
+/**
+ * Options for view contract calls
+ */ 
+export interface ViewFunctionOptions {
+  parse?: (response: Uint8Array) => any;
+  stringify?: (input: any) => any;
+}
+
+/** 
+* @minimum 0
+* @maximum 18446744073709551615
+* @asType integer
+*/
+export type u64 = number;
+/** 
+* @minimum -9223372036854775808
+* @maximum 9223372036854775807
+* @asType integer
+*/
+export type i64 = number;
+
+/**
+* @minimum  0 
+* @maximum 255
+* @asType integer
+* */
+export type u8 = number;
+/**
+* @minimum  -128 
+* @maximum 127
+* @asType integer
+* */
+export type i8 = number;
+/**
+* @minimum  0 
+* @maximum 65535
+* @asType integer
+* */
+export type u16 = number;
+/**
+* @minimum -32768 
+* @maximum 32767
+* @asType integer
+* */
+export type i16 = number;
+/**
+* @minimum 0 
+* @maximum 4294967295
+* @asType integer
+* */
+export type u32 = number;
+/**
+* @minimum 0 
+* @maximum 4294967295
+* @asType integer
+* */
+export type usize = number;
+/**
+* @minimum  -2147483648 
+* @maximum 2147483647
+* @asType integer
+* */
+export type i32 = number;
+
+/**
+* @minimum -3.40282347E+38
+* @maximum 3.40282347E+38
+*/
+export type f32 = number;
+
+/**
+* @minimum -1.7976931348623157E+308
+* @maximum 1.7976931348623157E+308
+*/
+export type f64 = number;";
