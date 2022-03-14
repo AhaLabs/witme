@@ -6,15 +6,13 @@ use std::path::PathBuf;
     author = "Benjamin Coenen <benjamin.coenen@hotmail.com>, Willem Wyndham <willem@ahalabs.dev>"
 )]
 pub struct WitMe {
-    // #[clap(flatten)]
-    // global_opts: GlobalOpts,
     #[clap(subcommand)]
     pub top_level_command: TopLevelCommand,
 }
 
 #[derive(Parser, Debug)]
 pub enum TopLevelCommand {
-    /// NEAR specific wit operations
+    /// NEAR specific wit transformations
     #[clap(subcommand)]
     Near(Command),
 }
@@ -42,12 +40,8 @@ pub enum Command {
         #[clap(long, short = 's')]
         prefix_string: Vec<String>,
 
-        /// Generate TypeScript file from generated wit file in one step
-        ///  
-        /// `-t ./dist` --> `./dist/index.ts`
-        ///
-        /// `-t ./dist/file.ts` --> `./dist/file.ts`
-        #[clap(long, name = "file or directory", short = 't')]
+
+        #[clap(long, name = "directory", short = 't')]
         typescript: Option<PathBuf>,
 
         /// Include near-sdk's base wit types
@@ -63,16 +57,12 @@ pub enum Command {
     /// Generate ts file from wit
     Ts {
         /// Specify input wit file
-        #[clap(long, short = 'i')]
+        #[clap(long, short = 'i', default_value = "index.wit")]
         input: PathBuf,
 
-        /// Specify output file or directory to write the generated TS
-        ///
-        /// `-o ./dist` --> `./dist/index.ts`
-        ///
-        /// `-o ./dist/file.ts` --> `./dist/file.`ts
-        #[clap(long, name = "file or directory", short = 'o')]
-        output: Option<PathBuf>,
+        /// Specify output directory to write the generated TS
+        #[clap(long, name = "directory", short = 'o', default_value = ".")]
+        output: PathBuf,
     },
 }
 

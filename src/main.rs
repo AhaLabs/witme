@@ -75,9 +75,7 @@ fn execute_cargo(cargo: &str, args: &[String]) -> Result<Paths> {
 
 fn run_generate(cli_args: opt::Command) -> Result<()> {
     match cli_args {
-        opt::Command::Ts { input, output } => {
-            ts_from_wit_file(&input, &output.unwrap_or_else(|| PathBuf::from(".")))
-        }
+        opt::Command::Ts { input, output } => ts_from_wit_file(&input, &output),
         opt::Command::Wit {
             args,
             output,
@@ -99,10 +97,10 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             }
 
             for path in prefix_file {
-              let prefix_file = String::from_utf8(read(path)?)?;
-              wit_str.push_str(&format!("{}\n\n", prefix_file));
+                let prefix_file = String::from_utf8(read(path)?)?;
+                wit_str.push_str(&format!("{}\n\n", prefix_file));
             }
-            
+
             for prefix in prefix_string {
                 wit_str.push_str(&format!("{}\n\n", prefix));
             }
