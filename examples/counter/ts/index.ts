@@ -1,87 +1,23 @@
-import { Account, transactions, providers, DEFAULT_FUNCTION_CALL_GAS } from 'near-api-js';
+import {
+  Account,
+  transactions,
+  providers,
+  DEFAULT_FUNCTION_CALL_GAS,
+  u8,
+  i8,
+  u16,
+  i16,
+  u32,
+  i32,
+  u64,
+  i64,
+  f32,
+  f64,
+  BN,
+  ChangeMethodOptions,
+  ViewFunctionOptions,
+} from './helper';
 
-
-import BN from 'bn.js';
-export interface ChangeMethodOptions {
-  gas?: BN;
-  attachedDeposit?: BN;
-  walletMeta?: string;
-  walletCallbackUrl?: string;
-}
-export interface ViewFunctionOptions {
-  // TODO currently JSON schema generator doesn't like function types
-  parse?: any;
-  // TODO currently JSON schema generator doesn't like function types
-  stringify?: any;
-}
-
-/** 
-* @minimum 0
-* @maximum 18446744073709551615
-* @asType integer
-*/
-export type u64 = number;
-/** 
-* @minimum -9223372036854775808
-* @maximum 9223372036854775807
-* @asType integer
-*/
-export type i64 = number;
-
-/**
-* @minimum  0 
-* @maximum 255
-* @asType integer
-* */
-export type u8 = number;
-/**
-* @minimum  -128 
-* @maximum 127
-* @asType integer
-* */
-export type i8 = number;
-/**
-* @minimum  0 
-* @maximum 65535
-* @asType integer
-* */
-export type u16 = number;
-/**
-* @minimum -32768 
-* @maximum 32767
-* @asType integer
-* */
-export type i16 = number;
-/**
-* @minimum 0 
-* @maximum 4294967295
-* @asType integer
-* */
-export type u32 = number;
-/**
-* @minimum 0 
-* @maximum 4294967295
-* @asType integer
-* */
-export type usize = number;
-/**
-* @minimum  -2147483648 
-* @maximum 2147483647
-* @asType integer
-* */
-export type i32 = number;
-
-/**
-* @minimum -3.40282347E+38
-* @maximum 3.40282347E+38
-*/
-export type f32 = number;
-
-/**
-* @minimum -1.7976931348623157E+308
-* @maximum 1.7976931348623157E+308
-*/
-export type f64 = number;
 
 export class Contract {
   
@@ -120,45 +56,6 @@ export class Contract {
   */
   resetTx(args = {}, options?: ChangeMethodOptions): transactions.Action {
     return transactions.functionCall("reset", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
-  }
-  /**
-  * Decrement (subtract from) the counter.
-  * 
-  * In (/src/main.js) this is also added to the "changeMethods" array
-  * using near-cli we can call this by:
-  * 
-  * ```bash
-  * near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
-  * ```
-  */
-  async decrement(args = {}, options?: ChangeMethodOptions): Promise<void> {
-    return providers.getTransactionLastResult(await this.decrementRaw(args, options));
-  }
-  /**
-  * Decrement (subtract from) the counter.
-  * 
-  * In (/src/main.js) this is also added to the "changeMethods" array
-  * using near-cli we can call this by:
-  * 
-  * ```bash
-  * near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
-  * ```
-  */
-  decrementRaw(args = {}, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
-    return this.account.functionCall({contractId: this.contractId, methodName: "decrement", args, ...options});
-  }
-  /**
-  * Decrement (subtract from) the counter.
-  * 
-  * In (/src/main.js) this is also added to the "changeMethods" array
-  * using near-cli we can call this by:
-  * 
-  * ```bash
-  * near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
-  * ```
-  */
-  decrementTx(args = {}, options?: ChangeMethodOptions): transactions.Action {
-    return transactions.functionCall("decrement", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
   }
   /**
   * Increment the counter.
@@ -202,6 +99,36 @@ export class Contract {
   incrementTx(args = {}, options?: ChangeMethodOptions): transactions.Action {
     return transactions.functionCall("increment", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
   }
+  /**
+  * Decrement (subtract from) the counter.
+  * 
+  * ```bash
+  * near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
+  * ```
+  */
+  async decrement(args = {}, options?: ChangeMethodOptions): Promise<void> {
+    return providers.getTransactionLastResult(await this.decrementRaw(args, options));
+  }
+  /**
+  * Decrement (subtract from) the counter.
+  * 
+  * ```bash
+  * near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
+  * ```
+  */
+  decrementRaw(args = {}, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
+    return this.account.functionCall({contractId: this.contractId, methodName: "decrement", args, ...options});
+  }
+  /**
+  * Decrement (subtract from) the counter.
+  * 
+  * ```bash
+  * near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
+  * ```
+  */
+  decrementTx(args = {}, options?: ChangeMethodOptions): transactions.Action {
+    return transactions.functionCall("decrement", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
+  }
 }
 /**
 * Returns 8-bit signed integer of the counter value.
@@ -228,20 +155,6 @@ export interface GetNum {
 export interface Reset {
 }
 /**
-* Decrement (subtract from) the counter.
-* 
-* In (/src/main.js) this is also added to the "changeMethods" array
-* using near-cli we can call this by:
-* 
-* ```bash
-* near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
-* ```
-* 
-* @contractMethod change
-*/
-export interface Decrement {
-}
-/**
 * Increment the counter.
 * 
 * Note, the parameter is "&mut self" as this function modifies state.
@@ -255,4 +168,15 @@ export interface Decrement {
 * @contractMethod change
 */
 export interface Increment {
+}
+/**
+* Decrement (subtract from) the counter.
+* 
+* ```bash
+* near call counter.YOU.testnet decrement --accountId donation.YOU.testnet
+* ```
+* 
+* @contractMethod change
+*/
+export interface Decrement {
 }
