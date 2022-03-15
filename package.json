@@ -12,6 +12,6 @@
   "scripts": {
     "vendor:offline": "cargo vendor -q --manifest-path crates/near-sdk/Cargo.toml --offline  --frozen -- target/vendor",
     "vendor": "cargo vendor -q --manifest-path crates/near-sdk/Cargo.toml -- target/vendor",
-    "build:wit": " (yarn vendor:offline || yarn vendor)  && cp target/vendor/near-sdk/index.wit crates/near-sdk/sdk.wit && cp target/vendor/near-contract-standards/index.wit crates/near-sdk/standards.wit"
+    "build:wit": " (yarn vendor:offline || yarn vendor)  && cp target/vendor/near-sdk/index.wit src/near-sdk/sdk.wit && cp target/vendor/near-contract-standards/index.wit src/near-sdk/standards.wit"
   }
 }
