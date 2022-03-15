@@ -53,7 +53,7 @@ pub enum Command {
         standards: bool,
     },
 
-    /// Generate ts file from wit
+    /// Generate ts from wit
     Ts {
         /// Specify input wit file
         #[clap(long, short = 'i', default_value = "index.wit")]
