@@ -1,295 +1,93 @@
 // This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v0.1.0) 
 
-// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (cargo-witgen v0.0.2) 
+type string-alias = string
 
-///  StorageUsage is used to count the amount of storage used by a contract.
-type storage-usage = u64
+test-simple: function(array: list<u8>) -> string
 
-///  Balance is a type for storing amounts of tokens, specified in yoctoNEAR.
-type balance = u128
+use-string-alias: function(s: string-alias) -> string-alias
 
-///  Represents the amount of NEAR tokens in "gas units" which are used to fund transactions.
-type gas = u64
+test-tuple: function(other: list<u8>, test-struct: test-struct, other-enum: test-enum) -> (string, s64)
 
-///  base64 string.
-type base64-vec-u8 = string
-
-///  Raw type for duration in nanoseconds
-type duration = u64
-
-type u128 = string
-
-///  Public key in a binary format with base58 string serialization with human-readable curve.
-///  The key types currently supported are `secp256k1` and `ed25519`.
-/// 
-///  Ed25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.
-type public-key = string
-
-///  @pattern ^(([a-z\\d]+[\\-_])*[a-z\\d]+\\.)*([a-z\\d]+[\\-_])*[a-z\\d]+$
-type account-id = string
-
-///  Raw type for timestamp in nanoseconds
-type timestamp = u64
-
-// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (cargo-witgen v0.0.2) 
-
-record storage-balance-bounds {
-    min: u128,
-	max: option<u128>
+///  Documentation over enum
+variant test-enum {
+    ///  Doc comment over Unit variant in enum
+    unit,
+    number(u64),
+    ///  Doc comment over String variant 
+    string-variant(string),
 }
 
-record fungible-token-metadata {
-    spec: string,
-	name: string,
-	symbol: string,
-	icon: option<string>,
-	reference: option<string>,
-	reference-hash: option<base64-vec-u8>,
-	decimals: u8
+
+test-result: function(other: list<u8>, number: u8, othernum: s32) -> expected<tuple<string, u64>, string>
+
+///  Example of using generating an enum, e.i. a variant with unit fields
+enum color {
+    red,
+    green,
+    blue,
 }
 
-///  In this implementation, the Token struct takes two extensions standards (metadata and approval) as optional fields, as they are frequently used in modern NFTs.
-record token {
-    token-id: token-id,
-	owner-id: account-id,
-	metadata: option<token-metadata>,
-	approved-account-ids: option<list<tuple<account-id,u64>>>
+
+record init-args {
+    owner-id: string,
+    metadata: nft-contract-metadata
 }
 
-///  Note that token IDs for NFTs are strings on NEAR. It's still fine to use autoincrementing numbers as unique IDs if desired, but they should be stringified. This is to make IDs more future-proof as chain-agnostic conventions and standards arise, and allows for more flexibility with considerations like bridging NFTs across chains, etc.
-type token-id = string
+///  Documentation over struct
+///  in multi-line
+type test-tuple = tuple<u64, string>
 
-record storage-balance {
-    total: u128,
-	available: u128
+variant my-enum {
+    unit,
+    tuple-variant(tuple<string, s32>),
 }
 
-type wrapped-duration = string
 
-///  Metadata on the individual token level.
-record token-metadata {
-    title: option<string>,
-	description: option<string>,
-	media: option<string>,
-	media-hash: option<base64-vec-u8>,
-	copies: option<u64>,
-	issued-at: option<string>,
-	expires-at: option<string>,
-	starts-at: option<string>,
-	updated-at: option<string>,
-	extra: option<string>,
-	reference: option<string>,
-	reference-hash: option<base64-vec-u8>
+record test-struct {
+    ///  Doc comment over inner field in struct
+    inner: string
 }
 
-///  Metadata for the NFT contract itself.
-record nft-contract-metadata {
-    spec: string,
-	name: string,
-	symbol: string,
-	icon: option<string>,
-	base-uri: option<string>,
-	reference: option<string>,
-	reference-hash: option<base64-vec-u8>
+test-option: function(other: list<u8>, number: u8, othernum: s32) -> option<tuple<string, u64>>
+
+has-mutable: function(s: string) -> string
+
+record has-hash-map {
+    map: list<tuple<string,test-struct>>
 }
 
-check-key: function(public-key: public-key) -> bool
+type nft-contract-metadata = string
 
+test-array: function(other: list<u8>, number: u8, othernum: s32) -> (string, u64)
 
-///  change
-update-allowance: function(allowance: u32)
-
-whitelisted: function(account-id: account-id) -> bool
-
-
-get-sale-info: function() -> sale-info
-
-
-record sale {
-    royalties: option<royalties>,
-	initial-royalties: option<royalties>,
-	presale-start: option<duration>,
-	public-sale-start: option<duration>,
-	allowance: option<u32>,
-	presale-price: option<u128>,
-	price: u128
+///  Here is a doc example to generate in wit file
+record test-bis {
+    coucou: string,
+    btes: list<u8>
 }
 
-cost-per-token: function(minter: account-id) -> u128
+test-vec: function(other: list<u8>, number: u8, othernum: s32) -> (string, u64)
 
-
-///  change
-transfer-ownership: function(new-owner: account-id)
-
-nft-total-supply: function() -> u128
-
-
-///  Current state of contract
-variant status {
-    ///  Not open for any sales
-	closed,
-	///  VIP accounts can mint
-	presale,
-	///  Any account can mint
-	open,
-	///  No more tokens to be minted
-	sold-out,
+///  Documentation over enum
+variant complicated-enum {
+    ///  Doc comment over Unit variant in enum
+    hash-fields(complicated-enum-hash-fields),
+    number(complicated-enum-number),
+    ///  Doc comment over String variant in enum
+    string-variant(complicated-enum-string-variant),
 }
 
-nft-tokens: function(from-index: option<u128>, limit: option<u64>) -> list<token>
-
-
-nft-token: function(token-id: token-id) -> option<token>
-
-
-///  change
-close-contract: function()
-
-///  change
-nft-approve: function(token-id: token-id, account-id: account-id, msg: option<string>)
-
-///  change
-start-sale: function(price: option<u128>)
-
-///  change
-nft-mint-many: function(num: u32) -> list<token>
-
-
-///  change
-update-uri: function(uri: string)
-
-///  change
-nft-transfer-call: function(receiver-id: account-id, token-id: token-id, approval-id: option<u64>, memo: option<string>, msg: string)
-
-nft-payout: function(token-id: string, balance: u128, max-len-payout: option<u32>) -> payout
-
-
-///  change
-nft-transfer-payout: function(receiver-id: account-id, token-id: string, approval-id: option<u64>, memo: option<string>, balance: u128, max-len-payout: option<u32>) -> payout
-
-
-///  Returns the balance associated with given key.
-get-key-balance: function() -> u128
-
-
-record initial-metadata {
+///  Doc comment over Unit variant in enum
+record complicated-enum-hash-fields {
     name: string,
-	symbol: string,
-	uri: string,
-	icon: option<string>,
-	spec: option<string>,
-	reference: option<string>,
-	reference-hash: option<base64-vec-u8>
+    kind: test-enum
 }
-
-///  Create a pending token that can be claimed with corresponding private key
-///  change
-create-linkdrop: function(public-key: public-key)
-
-///  Information about the current sale
-record sale-info {
-    ///  Current state of contract
-	status: status,
-	///  Start of the VIP sale
-	presale-start: duration,
-	///  Start of public sale
-	sale-start: duration,
-	///  Total tokens that could be minted
-	token-final-supply: u64,
-	///  Current price for one token
-	price: u128
+record complicated-enum-number {
+    size: u32
 }
-
-///  change
-add-whitelist-accounts: function(accounts: list<account-id>, allowance: option<u32>)
-
-///  change
-new: function(owner-id: account-id, metadata: nft-contract-metadata, size: u32, sale: sale)
-
-///  change
-start-presale: function(public-sale-start: option<duration>, presale-price: option<u128>)
-
-token-storage-cost: function() -> u128
-
-
-///  change
-nft-transfer: function(receiver-id: account-id, token-id: token-id, approval-id: option<u64>, memo: option<string>)
-
-///  change
-nft-revoke-all: function(token-id: token-id)
-
-cost-of-linkdrop: function(minter: account-id) -> u128
-
-
-total-cost: function(num: u32, minter: account-id) -> u128
-
-
-get-linkdrop-contract: function() -> account-id
-
-
-///  change
-new-default-meta: function(owner-id: account-id, metadata: initial-metadata, size: u32, sale: option<sale>)
-
-///  change
-nft-revoke: function(token-id: token-id, account-id: account-id)
-
-nft-metadata: function() -> nft-contract-metadata
-
-
-nft-is-approved: function(token-id: token-id, approved-account-id: account-id, approval-id: option<u64>) -> bool
-
-
-remaining-allowance: function(account-id: account-id) -> option<u32>
-
-
-///  change
-nft-mint: function(token-id: token-id, token-owner-id: account-id, token-metadata: token-metadata) -> token
-
-
-get-user-sale-info: function(account-id: account-id) -> user-sale-info
-
-/// @maximum 10000
-type basis-point = u16
-
-nft-tokens-for-owner: function(account-id: account-id, from-index: option<u128>, limit: option<u64>) -> list<token>
-
-
-///  change
-add-whitelist-account-ungaurded: function(account-id: account-id, allowance: u32)
-
-///  Information about the current sale from user perspective
-record user-sale-info {
-    sale-info: sale-info,
-	is-vip: bool,
-	remaining-allowance: option<u32>
-}
-
-///  Copied from https://github.com/near/NEPs/blob/6170aba1c6f4cd4804e9ad442caeae9dc47e7d44/specs/Standards/NonFungibleToken/Payout.md#reference-level-explanation
-///  A mapping of NEAR accounts to the amount each should be paid out, in
-///  the event of a token-sale. The payout mapping MUST be shorter than the
-///  maximum length specified by the financial contract obtaining this
-///  payout data. Any mapping of length 10 or less MUST be accepted by
-///  financial contracts, so 10 is a safe upper limit.
-///  This currently deviates from the standard but is in the process of updating to use this type
-record payout {
-    payout: list<tuple<account-id,u128>>
-}
-
-tokens-left: function() -> u32
-
-
-nft-supply-for-owner: function(account-id: account-id) -> u128
-
-
-///  change
-update-royalties: function(royalties: royalties)
-
-///  change
-nft-mint-one: function() -> token
-
-
-record royalties {
-    accounts: list<tuple<account-id,basis-point>>,
-	percent: basis-point
+///  Doc comment over String variant in enum
+record complicated-enum-string-variant {
+    ///  Can document fields
+    variant: string
 }
 

@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Decrement": {
+      "additionalProperties": false,
+      "contractMethod": "change",
+      "description": "Decrement (subtract from) the counter.\n\nIn (/src/main.js) this is also added to the \"changeMethods\" array using near-cli we can call this by:\n\n```bash near call counter.YOU.testnet decrement --accountId donation.YOU.testnet ```",
+      "type": "object"
+    },
+    "GetNum": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "description": "Returns 8-bit signed integer of the counter value.\n\nThis must match the type from our struct's 'val' defined above.\n\nNote, the parameter is `&self` (without being mutable) meaning it doesn't modify state. In the frontend (/src/main.js) this is added to the \"viewMethods\" array using near-cli we can call this by:\n\n```bash near view counter.YOU.testnet get_num ```",
+      "type": "object"
+    },
+    "Increment": {
+      "additionalProperties": false,
+      "contractMethod": "change",
+      "description": "Increment the counter.\n\nNote, the parameter is \"&mut self\" as this function modifies state. In the frontend (/src/main.js) this is added to the \"changeMethods\" array using near-cli we can call this by:\n\n```bash near call counter.YOU.testnet increment --accountId donation.YOU.testnet ```",
+      "type": "object"
+    },
+    "Reset": {
+      "additionalProperties": false,
+      "contractMethod": "change",
+      "description": "Reset to zero.",
+      "type": "object"
+    }
+  }
+}

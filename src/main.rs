@@ -75,9 +75,7 @@ fn execute_cargo(cargo: &str, args: &[String]) -> Result<Paths> {
 
 fn run_generate(cli_args: opt::Command) -> Result<()> {
     match cli_args {
-        opt::Command::Ts { input, output } => {
-            ts_from_wit_file(&input, &output.unwrap_or_else(|| PathBuf::from(".")))
-        }
+        opt::Command::Ts { input, output } => ts_from_wit_file(&input, &output),
         opt::Command::Wit {
             args,
             output,
@@ -87,9 +85,7 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             sdk,
             standards,
         } => {
-            let filename = output.unwrap_or_else(|| {
-                PathBuf::from(typescript.as_ref().map_or("witgen.wit", |_| "index.wit"))
-            });
+            let filename = output;
 
             let mut wit_str = format!("// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v{}) \n\n", env!("CARGO_PKG_VERSION"));
 
@@ -100,11 +96,12 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
                 }
             }
 
-            if let Some(path) = prefix_file {
+            for path in prefix_file {
                 let prefix_file = String::from_utf8(read(path)?)?;
                 wit_str.push_str(&format!("{}\n\n", prefix_file));
             }
-            if let Some(prefix) = prefix_string {
+
+            for prefix in prefix_string {
                 wit_str.push_str(&format!("{}\n\n", prefix));
             }
 
@@ -126,6 +123,7 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             }
             write_file(&filename, &wit_str)
         }
+        opt::Command::Json { input, out_dir } => generate_json_schema(&input, &out_dir),
     }
 }
 
@@ -154,4 +152,19 @@ fn write_file(path: &Path, contents: &str) -> Result<()> {
 fn ts_from_wit_file(input: &Path, out_dir: &Path) -> Result<()> {
     let content = String::from_utf8(fs::read(input)?)?;
     generate_typescript(&out_dir.to_path_buf(), &content)
+}
+
+fn generate_json_schema(input: &Path, out_dir: &Path) -> Result<()> {
+    Command::new("npx")
+        .arg("ts-json-schema-generator")
+        .arg("-p")
+        .arg(input)
+        .arg("--validation-keywords")
+        .arg("contractMethod")
+        .arg("--no-type-check")
+        .arg("-o")
+        .arg(out_dir.join("index.schema.json"))
+        .output()
+        .expect("failed to execute process");
+    Ok(())
 }

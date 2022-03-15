@@ -75,11 +75,24 @@ struct TestStruct {
 /// Documentation over enum
 #[witgen]
 enum TestEnum {
-    /// Doc comment over Unit variant in struct
+    /// Doc comment over Unit variant in enum
     Unit,
     Number(u64),
-    /// Doc comment over String variant in struct
+    /// Doc comment over String variant 
     StringVariant(String),
+}
+
+/// Documentation over enum
+#[witgen]
+enum ComplicatedEnum {
+    /// Doc comment over Unit variant in enum
+    HashFields { name: String, kind: TestEnum},
+    Number { size: u32},
+    /// Doc comment over String variant in enum
+    StringVariant { 
+      /// Can document fields
+      variant: String, 
+    },
 }
 
 #[witgen]
