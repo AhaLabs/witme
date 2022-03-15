@@ -40,7 +40,6 @@ pub enum Command {
         #[clap(long, short = 's')]
         prefix_string: Vec<String>,
 
-
         #[clap(long, name = "directory", short = 't')]
         typescript: Option<PathBuf>,
 
@@ -73,5 +72,5 @@ pub enum Command {
         /// output for JSON schema
         #[clap(long, name = "directory", short = 'o', default_value = ".")]
         out_dir: PathBuf,
-    }
+    },
 }

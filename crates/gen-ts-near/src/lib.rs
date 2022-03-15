@@ -631,11 +631,9 @@ impl Generator for Ts {
         }
         let imports = mem::take(&mut self.src);
         for (_module, exports) in mem::take(&mut self.guest_exports) {
-            self.src.ts(
-                "\nexport class Contract {
+            self.src.ts("\nexport class Contract {
                   
-                  constructor(public account: Account, public readonly contractId: string){}\n\n",
-            );
+                  constructor(public account: Account, public readonly contractId: string){}\n\n");
             for func in exports.freestanding_funcs.iter() {
                 self.src.ts(&func.ts);
             }
@@ -677,8 +675,7 @@ impl Ts {
             .filter(|r| r.is_tuple() && r.fields.len() == 2)
     }
     fn add_preamble(&mut self) {
-        self.src.ts(
-"import {
+        self.src.ts("import {
   Account,
   transactions,
   providers,

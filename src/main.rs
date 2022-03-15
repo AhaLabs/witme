@@ -123,7 +123,7 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             }
             write_file(&filename, &wit_str)
         }
-        opt::Command::Json {input, out_dir} => generate_json_schema(&input, &out_dir)
+        opt::Command::Json { input, out_dir } => generate_json_schema(&input, &out_dir),
     }
 }
 
@@ -155,7 +155,7 @@ fn ts_from_wit_file(input: &Path, out_dir: &Path) -> Result<()> {
 }
 
 fn generate_json_schema(input: &Path, out_dir: &Path) -> Result<()> {
-  Command::new("npx")
+    Command::new("npx")
         .arg("ts-json-schema-generator")
         .arg("-p")
         .arg(input)
@@ -166,5 +166,5 @@ fn generate_json_schema(input: &Path, out_dir: &Path) -> Result<()> {
         .arg(out_dir.join("index.schema.json"))
         .output()
         .expect("failed to execute process");
-  Ok(())
+    Ok(())
 }
