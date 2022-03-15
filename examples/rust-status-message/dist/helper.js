@@ -10,5 +10,6 @@ Object.defineProperty(exports, "Account", { enumerable: true, get: function () {
 Object.defineProperty(exports, "transactions", { enumerable: true, get: function () { return near_api_js_1.transactions; } });
 Object.defineProperty(exports, "providers", { enumerable: true, get: function () { return near_api_js_1.providers; } });
 Object.defineProperty(exports, "DEFAULT_FUNCTION_CALL_GAS", { enumerable: true, get: function () { return near_api_js_1.DEFAULT_FUNCTION_CALL_GAS; } });
+//@ts-ignore
 var bn_js_1 = __importDefault(require("bn.js"));
 exports.BN = bn_js_1.default;
