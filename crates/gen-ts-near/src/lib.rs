@@ -582,7 +582,8 @@ impl Generator for Ts {
             }
         };
         let prev = mem::take(&mut self.src);
-        let func_type = if is_change(func) { "change" } else { "view" };
+        let is_change_func = is_change(func);
+        let func_type = if is_change_func { "change" } else { "view" };
         let docs = func
             .docs
             .contents
@@ -594,8 +595,27 @@ impl Generator for Ts {
             "export interface {} {{\n",
             func.name.to_camel_case()
         ));
+        if is_change_func {
+            self.src.ts("args: {\n")
+        }
         self.print_args_type(iface, func, 0);
+        if is_change_func {
+            self.src.ts("
+    };
+    options: {
+      /** Units in gas
+       * @pattern [0-9]+
+       * @default \"30000000000000\"
+       */
+      gas?: string;
+      /** Units in yoctoNear
+       * @default 0
+       */
+      attachedDeposit?: Balance;
+    }\n");
+        }
         self.src.ts("}\n");
+
         let func_args = mem::replace(&mut self.src, prev);
         let exports = self
             .guest_exports

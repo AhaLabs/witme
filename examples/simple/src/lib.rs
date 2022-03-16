@@ -78,7 +78,7 @@ enum TestEnum {
     /// Doc comment over Unit variant in enum
     Unit,
     Number(u64),
-    /// Doc comment over String variant 
+    /// Doc comment over String variant
     StringVariant(String),
 }
 
@@ -86,12 +86,17 @@ enum TestEnum {
 #[witgen]
 enum ComplicatedEnum {
     /// Doc comment over Unit variant in enum
-    HashFields { name: String, kind: TestEnum},
-    Number { size: u32},
+    HashFields {
+        name: String,
+        kind: TestEnum,
+    },
+    Number {
+        size: u32,
+    },
     /// Doc comment over String variant in enum
-    StringVariant { 
-      /// Can document fields
-      variant: String, 
+    StringVariant {
+        /// Can document fields
+        variant: String,
     },
 }
 
