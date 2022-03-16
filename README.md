@@ -24,7 +24,7 @@ Currently there is a `near` subcommand for dealing with NEAR related transformat
   - generates a `index.wit` file in the root of a rust project (note: it can't be a workspace). This builds on [witgen](https://github.com/bnjjj/witgen).
 - `witme near ts`
   - generates ts files from a `.wit` file (defaults `index.wit` -> `./ts/*`). This builds on [wit-bindgen](https://github.com/bytecodealliance/wit-bindgen)
-- `wit near json`
+- `witme near json`
   - generates a json schema for the inputs to a schema from the typescript (defaults `./ts/index.ts` --> `index.schema.json`), which uses [ts-json-schema-generator](https://github.com/vega/ts-json-schema-generator).
 
 ## Extensions
