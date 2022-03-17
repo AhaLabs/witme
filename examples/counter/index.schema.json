@@ -15,205 +15,7 @@
       "description": "base64 string.",
       "type": "string"
     },
-    "Duration": {
-      "$ref": "#/definitions/u64",
-      "description": "Raw type for duration in nanoseconds"
-    },
-    "FungibleTokenMetadata": {
-      "additionalProperties": false,
-      "properties": {
-        "decimals": {
-          "$ref": "#/definitions/u8"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "reference": {
-          "type": "string"
-        },
-        "reference_hash": {
-          "$ref": "#/definitions/Base64VecU8"
-        },
-        "spec": {
-          "type": "string"
-        },
-        "symbol": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "spec",
-        "name",
-        "symbol",
-        "decimals"
-      ],
-      "type": "object"
-    },
-    "Gas": {
-      "$ref": "#/definitions/u64",
-      "description": "Represents the amount of NEAR tokens in \"gas units\" which are used to fund transactions."
-    },
-    "NftContractMetadata": {
-      "additionalProperties": false,
-      "description": "Metadata for the NFT contract itself.",
-      "properties": {
-        "base_uri": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "reference": {
-          "type": "string"
-        },
-        "reference_hash": {
-          "$ref": "#/definitions/Base64VecU8"
-        },
-        "spec": {
-          "type": "string"
-        },
-        "symbol": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "spec",
-        "name",
-        "symbol"
-      ],
-      "type": "object"
-    },
-    "PublicKey": {
-      "description": "Public key in a binary format with base58 string serialization with human-readable curve. The key types currently supported are `secp256k1` and `ed25519`.\n\nEd25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.",
-      "type": "string"
-    },
-    "StorageBalance": {
-      "additionalProperties": false,
-      "properties": {
-        "available": {
-          "$ref": "#/definitions/U128"
-        },
-        "total": {
-          "$ref": "#/definitions/U128"
-        }
-      },
-      "required": [
-        "total",
-        "available"
-      ],
-      "type": "object"
-    },
-    "StorageBalanceBounds": {
-      "additionalProperties": false,
-      "properties": {
-        "max": {
-          "$ref": "#/definitions/U128"
-        },
-        "min": {
-          "$ref": "#/definitions/U128"
-        }
-      },
-      "required": [
-        "min"
-      ],
-      "type": "object"
-    },
-    "StorageUsage": {
-      "$ref": "#/definitions/u64",
-      "description": "StorageUsage is used to count the amount of storage used by a contract."
-    },
-    "Timestamp": {
-      "$ref": "#/definitions/u64",
-      "description": "Raw type for timestamp in nanoseconds"
-    },
-    "Token": {
-      "additionalProperties": false,
-      "description": "In this implementation, the Token struct takes two extensions standards (metadata and approval) as optional fields, as they are frequently used in modern NFTs.",
-      "properties": {
-        "approved_account_ids": {
-          "additionalProperties": {
-            "$ref": "#/definitions/u64"
-          },
-          "type": "object"
-        },
-        "metadata": {
-          "$ref": "#/definitions/TokenMetadata"
-        },
-        "owner_id": {
-          "$ref": "#/definitions/AccountId"
-        },
-        "token_id": {
-          "$ref": "#/definitions/TokenId"
-        }
-      },
-      "required": [
-        "token_id",
-        "owner_id"
-      ],
-      "type": "object"
-    },
-    "TokenId": {
-      "description": "Note that token IDs for NFTs are strings on NEAR. It's still fine to use autoincrementing numbers as unique IDs if desired, but they should be stringified. This is to make IDs more future-proof as chain-agnostic conventions and standards arise, and allows for more flexibility with considerations like bridging NFTs across chains, etc.",
-      "type": "string"
-    },
-    "TokenMetadata": {
-      "additionalProperties": false,
-      "description": "Metadata on the individual token level.",
-      "properties": {
-        "copies": {
-          "$ref": "#/definitions/u64"
-        },
-        "description": {
-          "type": "string"
-        },
-        "expires_at": {
-          "type": "string"
-        },
-        "extra": {
-          "type": "string"
-        },
-        "issued_at": {
-          "type": "string"
-        },
-        "media": {
-          "type": "string"
-        },
-        "media_hash": {
-          "$ref": "#/definitions/Base64VecU8"
-        },
-        "reference": {
-          "type": "string"
-        },
-        "reference_hash": {
-          "$ref": "#/definitions/Base64VecU8"
-        },
-        "starts_at": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        },
-        "updated_at": {
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "U128": {
-      "description": "String representation of a u128-bit integer",
-      "pattern": "^[0-9]+$\nNote: largest u128 is \"340282366920938463463374607431768211455\"",
-      "type": "string"
-    },
-    "WrappedDuration": {
-      "type": "string"
-    },
-    "decrement": {
+    "Decrement": {
       "additionalProperties": false,
       "contractMethod": "change",
       "description": "Decrement (subtract from) the counter.\n\n```bash near call counter.YOU.testnet decrement --accountId donation.YOU.testnet ```",
@@ -238,19 +40,26 @@
             }
           },
           "type": "object"
-        },
-        "result": {
-          "type": "null"
         }
       },
       "required": [
         "args",
-        "options",
-        "result"
+        "options"
       ],
       "type": "object"
     },
-    "get_num": {
+    "Decrement__Result": {
+      "type": "null"
+    },
+    "Duration": {
+      "$ref": "#/definitions/u64",
+      "description": "Raw type for duration in nanoseconds"
+    },
+    "Gas": {
+      "$ref": "#/definitions/u64",
+      "description": "Represents the amount of NEAR tokens in \"gas units\" which are used to fund transactions."
+    },
+    "GetNum": {
       "additionalProperties": false,
       "contractMethod": "view",
       "description": "Returns 8-bit signed integer of the counter value.\n\nThis must match the type from our struct's 'val' defined above.\n\nNote, the parameter is `&self` (without being mutable) meaning it doesn't modify state. In the frontend (/src/main.js) this is added to the \"viewMethods\" array using near-cli we can call this by:\n\n```bash near view counter.YOU.testnet get_num ```",
@@ -258,23 +67,17 @@
         "args": {
           "additionalProperties": false,
           "type": "object"
-        },
-        "result": {
-          "$ref": "#/definitions/i8"
         }
       },
       "required": [
-        "args",
-        "result"
+        "args"
       ],
       "type": "object"
     },
-    "i8": {
-      "maximum": 127,
-      "minimum": -128,
-      "type": "integer"
+    "GetNum__Result": {
+      "$ref": "#/definitions/i8"
     },
-    "increment": {
+    "Increment": {
       "additionalProperties": false,
       "contractMethod": "change",
       "description": "Increment the counter.\n\nNote, the parameter is \"&mut self\" as this function modifies state. In the frontend (/src/main.js) this is added to the \"changeMethods\" array using near-cli we can call this by:\n\n```bash near call counter.YOU.testnet increment --accountId donation.YOU.testnet ```",
@@ -299,19 +102,22 @@
             }
           },
           "type": "object"
-        },
-        "result": {
-          "type": "null"
         }
       },
       "required": [
         "args",
-        "options",
-        "result"
+        "options"
       ],
       "type": "object"
     },
-    "reset": {
+    "Increment__Result": {
+      "type": "null"
+    },
+    "PublicKey": {
+      "description": "Public key in a binary format with base58 string serialization with human-readable curve. The key types currently supported are `secp256k1` and `ed25519`.\n\nEd25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.",
+      "type": "string"
+    },
+    "Reset": {
       "additionalProperties": false,
       "contractMethod": "change",
       "description": "Reset to zero.",
@@ -336,25 +142,37 @@
             }
           },
           "type": "object"
-        },
-        "result": {
-          "type": "null"
         }
       },
       "required": [
         "args",
-        "options",
-        "result"
+        "options"
       ],
       "type": "object"
     },
-    "u64": {
-      "maximum": 18446744073709552000,
-      "minimum": 0,
+    "Reset__Result": {
+      "type": "null"
+    },
+    "StorageUsage": {
+      "$ref": "#/definitions/u64",
+      "description": "StorageUsage is used to count the amount of storage used by a contract."
+    },
+    "Timestamp": {
+      "$ref": "#/definitions/u64",
+      "description": "Raw type for timestamp in nanoseconds"
+    },
+    "U128": {
+      "description": "String representation of a u128-bit integer",
+      "pattern": "^[0-9]+$\nNote: largest u128 is \"340282366920938463463374607431768211455\"",
+      "type": "string"
+    },
+    "i8": {
+      "maximum": 127,
+      "minimum": -128,
       "type": "integer"
     },
-    "u8": {
-      "maximum": 255,
+    "u64": {
+      "maximum": 18446744073709552000,
       "minimum": 0,
       "type": "integer"
     }

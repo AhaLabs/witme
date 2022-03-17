@@ -28,14 +28,29 @@
       "contractMethod": "view",
       "description": "Retreive a message for a given account id",
       "properties": {
-        "account_id": {
-          "$ref": "#/definitions/AccountId"
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "account_id": {
+              "$ref": "#/definitions/AccountId"
+            }
+          },
+          "required": [
+            "account_id"
+          ],
+          "type": "object"
         }
       },
       "required": [
-        "account_id"
+        "args"
       ],
       "type": "object"
+    },
+    "GetStatus__Result": {
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "PublicKey": {
       "description": "Public key in a binary format with base58 string serialization with human-readable curve. The key types currently supported are `secp256k1` and `ed25519`.\n\nEd25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.",
@@ -46,17 +61,48 @@
       "contractMethod": "change",
       "description": "Store a message for current signer account",
       "properties": {
-        "message": {
-          "type": "string"
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "message"
+          ],
+          "type": "object"
+        },
+        "options": {
+          "additionalProperties": false,
+          "properties": {
+            "attachedDeposit": {
+              "$ref": "#/definitions/Balance",
+              "default": 0,
+              "description": "Units in yoctoNear"
+            },
+            "gas": {
+              "default": "30000000000000",
+              "description": "Units in gas",
+              "pattern": "[0-9]+",
+              "type": "string"
+            }
+          },
+          "type": "object"
         }
       },
       "required": [
-        "message"
+        "args",
+        "options"
       ],
       "type": "object"
     },
+    "SetStatus__Result": {
+      "type": "null"
+    },
     "StorageUsage": {
-      "$ref": "#/definitions/u64"
+      "$ref": "#/definitions/u64",
+      "description": "StorageUsage is used to count the amount of storage used by a contract."
     },
     "Timestamp": {
       "$ref": "#/definitions/u64",

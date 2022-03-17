@@ -61,66 +61,6 @@ export type PublicKey = string;
 * Raw type for timestamp in nanoseconds
 */
 export type Timestamp = u64;
-/**
-* In this implementation, the Token struct takes two extensions standards (metadata and approval) as optional fields, as they are frequently used in modern NFTs.
-*/
-export interface Token {
-  token_id: TokenId;
-  owner_id: AccountId;
-  metadata?: TokenMetadata;
-  approved_account_ids?: Record<AccountId, u64>;
-}
-export interface FungibleTokenMetadata {
-  spec: string;
-  name: string;
-  symbol: string;
-  icon?: string;
-  reference?: string;
-  reference_hash?: Base64VecU8;
-  decimals: u8;
-}
-/**
-* Note that token IDs for NFTs are strings on NEAR. It's still fine to use autoincrementing numbers as unique IDs if desired, but they should be stringified. This is to make IDs more future-proof as chain-agnostic conventions and standards arise, and allows for more flexibility with considerations like bridging NFTs across chains, etc.
-*/
-export type TokenId = string;
-/**
-* Metadata for the NFT contract itself.
-*/
-export interface NftContractMetadata {
-  spec: string;
-  name: string;
-  symbol: string;
-  icon?: string;
-  base_uri?: string;
-  reference?: string;
-  reference_hash?: Base64VecU8;
-}
-export interface StorageBalanceBounds {
-  min: U128;
-  max?: U128;
-}
-/**
-* Metadata on the individual token level.
-*/
-export interface TokenMetadata {
-  title?: string;
-  description?: string;
-  media?: string;
-  media_hash?: Base64VecU8;
-  copies?: u64;
-  issued_at?: string;
-  expires_at?: string;
-  starts_at?: string;
-  updated_at?: string;
-  extra?: string;
-  reference?: string;
-  reference_hash?: Base64VecU8;
-}
-export interface StorageBalance {
-  total: U128;
-  available: U128;
-}
-export type WrappedDuration = string;
 
 export class Contract {
   
@@ -252,7 +192,7 @@ export interface GetNum {
   args: {};
   
 }
-type GetNum__Result =i8;
+export type GetNum__Result = i8;
 /**
 * Reset to zero.
 * 
@@ -273,7 +213,7 @@ export interface Reset {
   }
   
 }
-type Reset__Result =void;
+export type Reset__Result = void;
 /**
 * Increment the counter.
 * 
@@ -302,7 +242,7 @@ export interface Increment {
   }
   
 }
-type Increment__Result =void;
+export type Increment__Result = void;
 /**
 * Decrement (subtract from) the counter.
 * 
@@ -327,4 +267,4 @@ export interface Decrement {
   }
   
 }
-type Decrement__Result =void;
+export type Decrement__Result = void;

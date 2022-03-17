@@ -620,7 +620,7 @@ impl Generator for Ts {
     }\n");
         }
         self.src.ts("\n}\n");
-        self.src.ts(&format!("export type {}__Result =", func.name.to_camel_case()));
+        self.src.ts(&format!("export type {}__Result = ", func.name.to_camel_case()));
         self.print_func_result(iface, func);
         self.src.ts(";\n");
 

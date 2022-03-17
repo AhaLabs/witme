@@ -1,0 +1,912 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "AccountId": {
+      "maxLength": 64,
+      "minLength": 2,
+      "pattern": "^(([a-z\\d]+[-_])*[a-z\\d]+\\.)*([a-z\\d]+[-_])*[a-z\\d]+$",
+      "type": "string"
+    },
+    "Balance": {
+      "$ref": "#/definitions/U128",
+      "description": "Balance is a type for storing amounts of tokens, specified in yoctoNEAR."
+    },
+    "Base64VecU8": {
+      "description": "base64 string.",
+      "type": "string"
+    },
+    "Color": {
+      "description": "Example of using generating an enum, e.i. a variant with unit fields",
+      "enum": [
+        "Red",
+        "Green",
+        "Blue"
+      ],
+      "type": "string"
+    },
+    "ComplicatedEnum": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ComplicatedEnumHashFields"
+        },
+        {
+          "$ref": "#/definitions/ComplicatedEnumNumber"
+        },
+        {
+          "$ref": "#/definitions/ComplicatedEnumStringVariant"
+        }
+      ],
+      "description": "Documentation over enum"
+    },
+    "ComplicatedEnumHashFields": {
+      "additionalProperties": false,
+      "description": "Doc comment over Unit variant in enum",
+      "properties": {
+        "tag": {
+          "const": "hash-fields",
+          "type": "string"
+        },
+        "val": {
+          "$ref": "#/definitions/ComplicatedEnumHashFields"
+        }
+      },
+      "required": [
+        "tag",
+        "val"
+      ],
+      "type": "object"
+    },
+    "ComplicatedEnumNumber": {
+      "additionalProperties": false,
+      "properties": {
+        "tag": {
+          "const": "number",
+          "type": "string"
+        },
+        "val": {
+          "$ref": "#/definitions/ComplicatedEnumNumber"
+        }
+      },
+      "required": [
+        "tag",
+        "val"
+      ],
+      "type": "object"
+    },
+    "ComplicatedEnumStringVariant": {
+      "additionalProperties": false,
+      "description": "Doc comment over String variant in enum",
+      "properties": {
+        "tag": {
+          "const": "string-variant",
+          "type": "string"
+        },
+        "val": {
+          "$ref": "#/definitions/ComplicatedEnumStringVariant"
+        }
+      },
+      "required": [
+        "tag",
+        "val"
+      ],
+      "type": "object"
+    },
+    "Duration": {
+      "$ref": "#/definitions/u64",
+      "description": "Raw type for duration in nanoseconds"
+    },
+    "Gas": {
+      "$ref": "#/definitions/u64",
+      "description": "Represents the amount of NEAR tokens in \"gas units\" which are used to fund transactions."
+    },
+    "HasHashMap": {
+      "additionalProperties": false,
+      "properties": {
+        "map": {
+          "additionalProperties": {
+            "$ref": "#/definitions/TestStruct"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "map"
+      ],
+      "type": "object"
+    },
+    "HasMutable": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "properties": {
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "s": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "s"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "HasMutable__Result": {
+      "type": "string"
+    },
+    "InitArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "$ref": "#/definitions/NftContractMetadata"
+        },
+        "owner_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_id",
+        "metadata"
+      ],
+      "type": "object"
+    },
+    "MyEnum": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/MyEnumUnit"
+        },
+        {
+          "$ref": "#/definitions/MyEnumTupleVariant"
+        }
+      ]
+    },
+    "MyEnumTupleVariant": {
+      "additionalProperties": false,
+      "properties": {
+        "tag": {
+          "const": "tuple-variant",
+          "type": "string"
+        },
+        "val": {
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/i32"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "tag",
+        "val"
+      ],
+      "type": "object"
+    },
+    "MyEnumUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "tag": {
+          "const": "unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag"
+      ],
+      "type": "object"
+    },
+    "NftContractMetadata": {
+      "type": "string"
+    },
+    "PublicKey": {
+      "description": "Public key in a binary format with base58 string serialization with human-readable curve. The key types currently supported are `secp256k1` and `ed25519`.\n\nEd25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.",
+      "type": "string"
+    },
+    "Result<[string,def-alias-ts_helper.ts-504-602-ts_helper.ts-0-1531793285289],string>": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "tag": {
+              "const": "ok",
+              "type": "string"
+            },
+            "val": {
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/u64"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "tag",
+            "val"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "tag": {
+              "const": "err",
+              "type": "string"
+            },
+            "val": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "tag",
+            "val"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "StorageUsage": {
+      "$ref": "#/definitions/u64",
+      "description": "StorageUsage is used to count the amount of storage used by a contract."
+    },
+    "StringAlias": {
+      "type": "string"
+    },
+    "TestArray": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "properties": {
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "number": {
+              "$ref": "#/definitions/u8"
+            },
+            "other": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "properties": {
+                "BYTES_PER_ELEMENT": {
+                  "type": "number"
+                },
+                "buffer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "byteLength": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "byteLength"
+                  ],
+                  "type": "object"
+                },
+                "byteLength": {
+                  "type": "number"
+                },
+                "byteOffset": {
+                  "type": "number"
+                },
+                "length": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "BYTES_PER_ELEMENT",
+                "buffer",
+                "byteLength",
+                "byteOffset",
+                "length"
+              ],
+              "type": "object"
+            },
+            "othernum": {
+              "$ref": "#/definitions/i32"
+            }
+          },
+          "required": [
+            "other",
+            "number",
+            "othernum"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "TestArray__Result": {
+      "items": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/u64"
+        }
+      ],
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "TestBis": {
+      "additionalProperties": false,
+      "description": "Here is a doc example to generate in wit file",
+      "properties": {
+        "btes": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "properties": {
+            "BYTES_PER_ELEMENT": {
+              "type": "number"
+            },
+            "buffer": {
+              "additionalProperties": false,
+              "properties": {
+                "byteLength": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "byteLength"
+              ],
+              "type": "object"
+            },
+            "byteLength": {
+              "type": "number"
+            },
+            "byteOffset": {
+              "type": "number"
+            },
+            "length": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "BYTES_PER_ELEMENT",
+            "buffer",
+            "byteLength",
+            "byteOffset",
+            "length"
+          ],
+          "type": "object"
+        },
+        "coucou": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "coucou",
+        "btes"
+      ],
+      "type": "object"
+    },
+    "TestEnum": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/TestEnumUnit"
+        },
+        {
+          "$ref": "#/definitions/TestEnumNumber"
+        },
+        {
+          "$ref": "#/definitions/TestEnumStringVariant"
+        }
+      ],
+      "description": "Documentation over enum"
+    },
+    "TestEnumNumber": {
+      "additionalProperties": false,
+      "properties": {
+        "tag": {
+          "const": "number",
+          "type": "string"
+        },
+        "val": {
+          "$ref": "#/definitions/u64"
+        }
+      },
+      "required": [
+        "tag",
+        "val"
+      ],
+      "type": "object"
+    },
+    "TestEnumStringVariant": {
+      "additionalProperties": false,
+      "description": "Doc comment over String variant",
+      "properties": {
+        "tag": {
+          "const": "string-variant",
+          "type": "string"
+        },
+        "val": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag",
+        "val"
+      ],
+      "type": "object"
+    },
+    "TestEnumUnit": {
+      "additionalProperties": false,
+      "description": "Doc comment over Unit variant in enum",
+      "properties": {
+        "tag": {
+          "const": "unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag"
+      ],
+      "type": "object"
+    },
+    "TestOption": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "properties": {
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "number": {
+              "$ref": "#/definitions/u8"
+            },
+            "other": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "properties": {
+                "BYTES_PER_ELEMENT": {
+                  "type": "number"
+                },
+                "buffer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "byteLength": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "byteLength"
+                  ],
+                  "type": "object"
+                },
+                "byteLength": {
+                  "type": "number"
+                },
+                "byteOffset": {
+                  "type": "number"
+                },
+                "length": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "BYTES_PER_ELEMENT",
+                "buffer",
+                "byteLength",
+                "byteOffset",
+                "length"
+              ],
+              "type": "object"
+            },
+            "othernum": {
+              "$ref": "#/definitions/i32"
+            }
+          },
+          "required": [
+            "other",
+            "number",
+            "othernum"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "TestOption__Result": {
+      "anyOf": [
+        {
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/u64"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "TestResult": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "properties": {
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "number": {
+              "$ref": "#/definitions/u8"
+            },
+            "other": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "properties": {
+                "BYTES_PER_ELEMENT": {
+                  "type": "number"
+                },
+                "buffer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "byteLength": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "byteLength"
+                  ],
+                  "type": "object"
+                },
+                "byteLength": {
+                  "type": "number"
+                },
+                "byteOffset": {
+                  "type": "number"
+                },
+                "length": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "BYTES_PER_ELEMENT",
+                "buffer",
+                "byteLength",
+                "byteOffset",
+                "length"
+              ],
+              "type": "object"
+            },
+            "othernum": {
+              "$ref": "#/definitions/i32"
+            }
+          },
+          "required": [
+            "other",
+            "number",
+            "othernum"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "TestResult__Result": {
+      "$ref": "#/definitions/Result%3C%5Bstring%2Cdef-alias-ts_helper.ts-504-602-ts_helper.ts-0-1531793285289%5D%2Cstring%3E"
+    },
+    "TestSimple": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "properties": {
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "array": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "properties": {
+                "BYTES_PER_ELEMENT": {
+                  "type": "number"
+                },
+                "buffer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "byteLength": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "byteLength"
+                  ],
+                  "type": "object"
+                },
+                "byteLength": {
+                  "type": "number"
+                },
+                "byteOffset": {
+                  "type": "number"
+                },
+                "length": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "BYTES_PER_ELEMENT",
+                "buffer",
+                "byteLength",
+                "byteOffset",
+                "length"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "array"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "TestSimple__Result": {
+      "type": "string"
+    },
+    "TestStruct": {
+      "additionalProperties": false,
+      "properties": {
+        "inner": {
+          "description": "Doc comment over inner field in struct",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inner"
+      ],
+      "type": "object"
+    },
+    "TestTuple": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "properties": {
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "other": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "properties": {
+                "BYTES_PER_ELEMENT": {
+                  "type": "number"
+                },
+                "buffer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "byteLength": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "byteLength"
+                  ],
+                  "type": "object"
+                },
+                "byteLength": {
+                  "type": "number"
+                },
+                "byteOffset": {
+                  "type": "number"
+                },
+                "length": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "BYTES_PER_ELEMENT",
+                "buffer",
+                "byteLength",
+                "byteOffset",
+                "length"
+              ],
+              "type": "object"
+            },
+            "other_enum": {
+              "$ref": "#/definitions/TestEnum"
+            },
+            "test_struct": {
+              "$ref": "#/definitions/TestStruct"
+            }
+          },
+          "required": [
+            "other",
+            "test_struct",
+            "other_enum"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "TestTuple__Result": {
+      "items": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/i64"
+        }
+      ],
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "TestVec": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "properties": {
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "number": {
+              "$ref": "#/definitions/u8"
+            },
+            "other": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "properties": {
+                "BYTES_PER_ELEMENT": {
+                  "type": "number"
+                },
+                "buffer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "byteLength": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "byteLength"
+                  ],
+                  "type": "object"
+                },
+                "byteLength": {
+                  "type": "number"
+                },
+                "byteOffset": {
+                  "type": "number"
+                },
+                "length": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "BYTES_PER_ELEMENT",
+                "buffer",
+                "byteLength",
+                "byteOffset",
+                "length"
+              ],
+              "type": "object"
+            },
+            "othernum": {
+              "$ref": "#/definitions/i32"
+            }
+          },
+          "required": [
+            "other",
+            "number",
+            "othernum"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "TestVec__Result": {
+      "items": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/u64"
+        }
+      ],
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "Timestamp": {
+      "$ref": "#/definitions/u64",
+      "description": "Raw type for timestamp in nanoseconds"
+    },
+    "U128": {
+      "description": "String representation of a u128-bit integer",
+      "pattern": "^[0-9]+$\nNote: largest u128 is \"340282366920938463463374607431768211455\"",
+      "type": "string"
+    },
+    "UseStringAlias": {
+      "additionalProperties": false,
+      "contractMethod": "view",
+      "properties": {
+        "args": {
+          "additionalProperties": false,
+          "properties": {
+            "s": {
+              "$ref": "#/definitions/StringAlias"
+            }
+          },
+          "required": [
+            "s"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "UseStringAlias__Result": {
+      "$ref": "#/definitions/StringAlias"
+    },
+    "i32": {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "type": "integer"
+    },
+    "i64": {
+      "maximum": 9223372036854776000,
+      "minimum": -9223372036854776000,
+      "type": "integer"
+    },
+    "u32": {
+      "maximum": 4294967295,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "u64": {
+      "maximum": 18446744073709552000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "u8": {
+      "maximum": 255,
+      "minimum": 0,
+      "type": "integer"
+    }
+  }
+}

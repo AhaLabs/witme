@@ -16,7 +16,9 @@ import {
   BN,
   ChangeMethodOptions,
   ViewFunctionOptions,
-} from './helper';/**
+} from './helper';
+
+/**
 * StorageUsage is used to count the amount of storage used by a contract.
 */
 export type StorageUsage = u64;
@@ -103,13 +105,32 @@ export class Contract {
 * @contractMethod view
 */
 export interface GetStatus {
-  account_id: AccountId;
+  args: {
+    account_id: AccountId;
+  };
+  
 }
+export type GetStatus__Result = string | null;
 /**
 * Store a message for current signer account
 * 
 * @contractMethod change
 */
 export interface SetStatus {
-  message: string;
+  args: {
+    message: string;
+  };
+  options: {
+    /** Units in gas
+    * @pattern [0-9]+
+    * @default "30000000000000"
+    */
+    gas?: string;
+    /** Units in yoctoNear
+    * @default 0
+    */
+    attachedDeposit?: Balance;
+  }
+  
 }
+export type SetStatus__Result = void;

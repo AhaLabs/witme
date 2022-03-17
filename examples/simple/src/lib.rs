@@ -96,7 +96,7 @@ enum ComplicatedEnum {
     /// Doc comment over String variant in enum
     StringVariant {
         /// Can document fields
-        variant: String,
+        inner: String,
     },
 }
 
