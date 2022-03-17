@@ -297,6 +297,31 @@ impl Ts {
         // Always async
         self.src.ts("Promise<");
 
+        self.print_func_result(iface, func);
+
+        self.src.ts("> {\n");
+
+        if is_change(func) {
+            self.src.ts(&format!(
+                "return providers.getTransactionLastResult(await this.{name}Raw(args, options));\n}}\n"
+            ));
+            self.docs(&func.docs);
+            self.src.ts(&format!("{name}Raw"));
+            self.print_args(iface, func, param_start);
+            self.src.ts("Promise<providers.FinalExecutionOutcome> {\n");
+            self.src.ts(&format!("return this.account.functionCall({{contractId: this.contractId, methodName: \"{name}\", args, ...options}});\n}}\n"));
+            self.docs(&func.docs);
+            self.src.ts(&format!("{name}Tx"));
+            self.print_args(iface, func, param_start);
+            self.src.ts(&format!("transactions.Action {{\n return transactions.functionCall(\"{name}\", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))\n}}\n"));
+        } else {
+            self.src.ts(&format!(
+                "return this.account.viewFunction(this.contractId, \"{name}\", args, options);\n}}\n"
+            ));
+        }
+    }
+
+    fn print_func_result(&mut self, iface: &Interface, func: &Function) {
         match func.results.len() {
             0 => self.src.ts("void"),
             1 => self.print_ty(iface, &func.results[0].1),
@@ -323,27 +348,6 @@ impl Ts {
                     self.src.ts(" }");
                 }
             }
-        }
-
-        self.src.ts("> {\n");
-
-        if is_change(func) {
-            self.src.ts(&format!(
-                "return providers.getTransactionLastResult(await this.{name}Raw(args, options));\n}}\n"
-            ));
-            self.docs(&func.docs);
-            self.src.ts(&format!("{name}Raw"));
-            self.print_args(iface, func, param_start);
-            self.src.ts("Promise<providers.FinalExecutionOutcome> {\n");
-            self.src.ts(&format!("return this.account.functionCall({{contractId: this.contractId, methodName: \"{name}\", args, ...options}});\n}}\n"));
-            self.docs(&func.docs);
-            self.src.ts(&format!("{name}Tx"));
-            self.print_args(iface, func, param_start);
-            self.src.ts(&format!("transactions.Action {{\n return transactions.functionCall(\"{name}\", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))\n}}\n"));
-        } else {
-            self.src.ts(&format!(
-                "return this.account.viewFunction(this.contractId, \"{name}\", args, options);\n}}\n"
-            ));
         }
     }
 
@@ -595,14 +599,15 @@ impl Generator for Ts {
             "export interface {} {{\n",
             func.name.to_camel_case()
         ));
-        if is_change_func {
-            self.src.ts("args: {\n")
+
+        self.src.ts("args: {");
+        if !func.params.is_empty() {
+            self.src.ts("\n");
+            self.print_args_type(iface, func, 0);
         }
-        self.print_args_type(iface, func, 0);
+        self.src.ts("};\n");
         if is_change_func {
-            self.src.ts("
-    };
-    options: {
+            self.src.ts("options: {
       /** Units in gas
        * @pattern [0-9]+
        * @default \"30000000000000\"
@@ -614,7 +619,10 @@ impl Generator for Ts {
       attachedDeposit?: Balance;
     }\n");
         }
-        self.src.ts("}\n");
+        self.src.ts("\n}\n");
+        self.src.ts(&format!("export type {}__Result =", func.name.to_camel_case()));
+        self.print_func_result(iface, func);
+        self.src.ts(";\n");
 
         let func_args = mem::replace(&mut self.src, prev);
         let exports = self

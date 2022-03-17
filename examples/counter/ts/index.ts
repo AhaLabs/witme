@@ -249,16 +249,17 @@ export class Contract {
 * @contractMethod view
 */
 export interface GetNum {
+  args: {};
+  
 }
+type GetNum__Result =i8;
 /**
 * Reset to zero.
 * 
 * @contractMethod change
 */
 export interface Reset {
-  args: {
-    
-  };
+  args: {};
   options: {
     /** Units in gas
     * @pattern [0-9]+
@@ -270,7 +271,9 @@ export interface Reset {
     */
     attachedDeposit?: Balance;
   }
+  
 }
+type Reset__Result =void;
 /**
 * Increment the counter.
 * 
@@ -285,9 +288,7 @@ export interface Reset {
 * @contractMethod change
 */
 export interface Increment {
-  args: {
-    
-  };
+  args: {};
   options: {
     /** Units in gas
     * @pattern [0-9]+
@@ -299,7 +300,9 @@ export interface Increment {
     */
     attachedDeposit?: Balance;
   }
+  
 }
+type Increment__Result =void;
 /**
 * Decrement (subtract from) the counter.
 * 
@@ -310,9 +313,7 @@ export interface Increment {
 * @contractMethod change
 */
 export interface Decrement {
-  args: {
-    
-  };
+  args: {};
   options: {
     /** Units in gas
     * @pattern [0-9]+
@@ -324,4 +325,6 @@ export interface Decrement {
     */
     attachedDeposit?: Balance;
   }
+  
 }
+type Decrement__Result =void;
