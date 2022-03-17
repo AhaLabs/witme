@@ -23,6 +23,7 @@ wit-bindgen-gen-ts-near = {path = "crates/gen-ts-near", version = "0.1.0"}
 assert_cmd = "2.0.4"
 assert_fs = "1.0.7"
 predicates = {version = "2.1.1", features = ["regex"]}
+wit-parser = { version = '0.0.2', package = "aha-wit-parser"}
 
 [workspace]
 members = ["examples/*", "crates/*"]
