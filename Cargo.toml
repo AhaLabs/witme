@@ -6,7 +6,7 @@ keywords = ["WebAssembly", "Wasm", "wit", "WasmInterfaceTypes"]
 license = "MIT"
 name = "witme"
 repository = "https://github.com/ahalabs/witme"
-version = "0.2.1"
+version = "0.2.2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
