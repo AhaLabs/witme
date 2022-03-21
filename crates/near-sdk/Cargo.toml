@@ -8,5 +8,5 @@ repository = "https://github.com/ahalabs/witme"
 version = "0.1.0"
 
 [dev-dependencies]
-near-sdk = { git = "https://github.com/ahalabs/near-sdk-rs", tag = "v4.0.0-3" }
-near-contract-standards = { git = "https://github.com/ahalabs/near-sdk-rs", tag = "v4.0.0-3" }
+near-sdk = { git = "https://github.com/ahalabs/near-sdk-rs", tag = "v4.0.0-4" }
+near-contract-standards = { git = "https://github.com/ahalabs/near-sdk-rs", tag = "v4.0.0-4" }
