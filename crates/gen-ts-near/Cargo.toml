@@ -5,7 +5,7 @@ edition = "2018"
 license = "Apache-2.0"
 name = "wit-bindgen-gen-ts-near"
 repository = "https://github.com/ahalabs/wit-me"
-version = "0.2.0"
+version = "0.2.1"
 
 [lib]
 doctest = false
