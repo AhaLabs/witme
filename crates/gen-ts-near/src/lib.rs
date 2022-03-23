@@ -614,7 +614,7 @@ impl Generator for Ts {
        */
       gas?: string;
       /** Units in yoctoNear
-       * @default 0
+       * @default \"0\"
        */
       attachedDeposit?: Balance;
     }\n");

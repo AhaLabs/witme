@@ -29,7 +29,7 @@
           "properties": {
             "attachedDeposit": {
               "$ref": "#/definitions/Balance",
-              "default": 0,
+              "default": "0",
               "description": "Units in yoctoNear"
             },
             "gas": {
@@ -91,7 +91,7 @@
           "properties": {
             "attachedDeposit": {
               "$ref": "#/definitions/Balance",
-              "default": 0,
+              "default": "0",
               "description": "Units in yoctoNear"
             },
             "gas": {
@@ -131,7 +131,7 @@
           "properties": {
             "attachedDeposit": {
               "$ref": "#/definitions/Balance",
-              "default": 0,
+              "default": "0",
               "description": "Units in yoctoNear"
             },
             "gas": {
@@ -163,7 +163,7 @@
     },
     "U128": {
       "description": "String representation of a u128-bit integer",
-      "pattern": "^[0-9]+$\nNote: largest u128 is \"340282366920938463463374607431768211455\"",
+      "pattern": "^[0-9]+$",
       "type": "string"
     },
     "i8": {

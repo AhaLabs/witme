@@ -27,12 +27,6 @@ export type StorageUsage = u64;
 */
 export type Balance = U128;
 /**
-* String representation of a u128-bit integer
-* @pattern ^[0-9]+$
-* Note: largest u128 is "340282366920938463463374607431768211455"
-*/
-export type U128 = string;
-/**
 * Represents the amount of NEAR tokens in "gas units" which are used to fund transactions.
 */
 export type Gas = u64;
@@ -50,6 +44,11 @@ export type Duration = u64;
 * @pattern ^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$
 */
 export type AccountId = string;
+/**
+* String representation of a u128-bit integer
+* @pattern ^[0-9]+$
+*/
+export type U128 = string;
 /**
 * Public key in a binary format with base58 string serialization with human-readable curve.
 * The key types currently supported are `secp256k1` and `ed25519`.
@@ -127,7 +126,7 @@ export interface SetStatus {
     */
     gas?: string;
     /** Units in yoctoNear
-    * @default 0
+    * @default "0"
     */
     attachedDeposit?: Balance;
   }
