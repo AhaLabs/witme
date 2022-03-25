@@ -10,7 +10,7 @@ If generating json schemas need [nodejs](https://nodejs.org/en/) installed. One 
 
 ## Features
 
-Currently this repo is geared toward NEAR smart contracts (currently only for Rust), but the goal is to become a general purpose tool for working with [`.wit` format](https://github.com/bytecodealliance/wit-bindgen/blob/main/WIT.md).
+Currently this repo is geared toward NEAR smart contracts (currently only for Rust), but the goal is to become a general purpose tool for working with the [`.wit` format](https://github.com/bytecodealliance/wit-bindgen/blob/main/WIT.md).
 
 - Generate `.wit` from NEAR smart contracts written in Rust
 - Generate TS from `.wit` for interacting with contracts
