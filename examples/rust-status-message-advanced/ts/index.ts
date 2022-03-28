@@ -60,8 +60,15 @@ export type PublicKey = string;
 * Raw type for timestamp in nanoseconds
 */
 export type Timestamp = u64;
-export interface Fun {
-  i: i32;
+/**
+* A message that contains some text
+*/
+export interface Message {
+  /**
+  * Inner string value
+  * @pattern ^TEXT:
+  */
+  text: string;
 }
 
 export class Contract {
@@ -69,70 +76,44 @@ export class Contract {
   constructor(public account: Account, public readonly contractId: string){}
   
   /**
-  * Retreive a message for a given account id
+  * A change call to set the message
   */
-  get_status(args: {
-    account_id: AccountId;
-  }, options?: ViewFunctionOptions): Promise<string | null> {
-    return this.account.viewFunction(this.contractId, "get_status", args, options);
-  }
-  get_fun(args = {}, options?: ViewFunctionOptions): Promise<Fun> {
-    return this.account.viewFunction(this.contractId, "get_fun", args, options);
-  }
-  /**
-  * Store a message for current signer account
-  */
-  async set_status(args: {
-    message: string;
+  async set_message(args: {
+    message: Message;
   }, options?: ChangeMethodOptions): Promise<void> {
-    return providers.getTransactionLastResult(await this.set_statusRaw(args, options));
+    return providers.getTransactionLastResult(await this.set_messageRaw(args, options));
   }
   /**
-  * Store a message for current signer account
+  * A change call to set the message
   */
-  set_statusRaw(args: {
-    message: string;
+  set_messageRaw(args: {
+    message: Message;
   }, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
-    return this.account.functionCall({contractId: this.contractId, methodName: "set_status", args, ...options});
+    return this.account.functionCall({contractId: this.contractId, methodName: "set_message", args, ...options});
   }
   /**
-  * Store a message for current signer account
+  * A change call to set the message
   */
-  set_statusTx(args: {
-    message: string;
+  set_messageTx(args: {
+    message: Message;
   }, options?: ChangeMethodOptions): transactions.Action {
-    return transactions.functionCall("set_status", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
+    return transactions.functionCall("set_message", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
+  }
+  /**
+  * A view call to get the current message
+  */
+  get_message(args = {}, options?: ViewFunctionOptions): Promise<Message> {
+    return this.account.viewFunction(this.contractId, "get_message", args, options);
   }
 }
 /**
-* Retreive a message for a given account id
-* 
-* @contractMethod view
-*/
-export interface GetStatus {
-  args: {
-    account_id: AccountId;
-  };
-  
-}
-export type GetStatus__Result = string | null;
-/**
-* 
-* @contractMethod view
-*/
-export interface GetFun {
-  args: {};
-  
-}
-export type GetFun__Result = Fun;
-/**
-* Store a message for current signer account
+* A change call to set the message
 * 
 * @contractMethod change
 */
-export interface SetStatus {
+export interface SetMessage {
   args: {
-    message: string;
+    message: Message;
   };
   options: {
     /** Units in gas
@@ -147,4 +128,14 @@ export interface SetStatus {
   }
   
 }
-export type SetStatus__Result = void;
+export type SetMessage__Result = void;
+/**
+* A view call to get the current message
+* 
+* @contractMethod view
+*/
+export interface GetMessage {
+  args: {};
+  
+}
+export type GetMessage__Result = Message;

@@ -1,7 +1,7 @@
-use assert_cmd::Command;
-use assert_fs::{prelude::*};
-use std::{fs, io::Read};
 use anyhow::Result;
+use assert_cmd::Command;
+use assert_fs::prelude::*;
+use std::{env::current_dir, fs, fs::DirEntry, io::Read, path::{Path, PathBuf}};
 
 fn cmd<'a>() -> Result<Command> {
     Ok(Command::cargo_bin("witme")?)
@@ -20,31 +20,27 @@ fn help_case() -> Result<()> {
     Ok(())
 }
 
-
-
-fn near_cmd<'a>(example: &str) -> Result<Command> {
+fn near_cmd<'a>(example: &Path) -> Result<Command> {
     let mut c = cmd()?;
-    c.current_dir(&format!("./examples/{example}")).arg("near");
+    c.current_dir(example).arg("near");
     Ok(c)
 }
 
-fn wit_cmd(example: &str) -> Result<Command> {
+fn wit_cmd(example: &Path) -> Result<Command> {
     let mut c = near_cmd(example)?;
     c.arg("wit");
     Ok(c)
 }
 
-fn test_example_wit(example: &str) -> Result<()> {
+fn test_example_wit(example: PathBuf) -> Result<()> {
     let temp = assert_fs::TempDir::new().unwrap();
     let file = temp.child("index.wit");
-    (&mut wit_cmd(example)?)
+    (&mut wit_cmd(&example)?)
         .arg("-o")
         .arg(temp.join("index.wit"))
         .arg("--sdk")
         .unwrap();
-    // file.assert(predicates::str::contains("get-num: function() -> s8"));
-    let mut f =
-        fs::File::open(std::env::current_dir()?.join(&format!("examples/{example}/index.wit")))?;
+    let mut f = fs::File::open(example.join("index.wit"))?;
     let mut actual_file = fs::File::open(&file)?;
     let mut contents = String::new();
     let mut actual = String::new();
@@ -53,25 +49,20 @@ fn test_example_wit(example: &str) -> Result<()> {
     let contents_vec = contents.split('\n').collect::<Vec<&str>>().sort();
     let actual_vec = actual.split('\n').collect::<Vec<&str>>().sort();
     assert_eq!(contents_vec, actual_vec);
-    // let mut left = parse_wit_str(&actual)?;
-    // let mut right = parse_wit_str(&contents)?;
-
-    // assert_eq!(&format!("{:#?}", left), &format!("{:#?}", right));
-
     Ok(())
 }
 
-#[test]
-fn counter_wit() -> Result<()> {
-    test_example_wit("counter")
+fn is_dir(d: Result<DirEntry, std::io::Error>) -> Option<PathBuf> {
+    match d {
+        Ok(entry) if entry.file_type().unwrap().is_dir() => Some(entry.path()),
+        _ => None,
+    }
 }
 
 #[test]
-fn status_message_wit() -> Result<()> {
-    test_example_wit("rust-status-message")
-}
-
-#[test]
-fn simple_wit() -> Result<()> {
-    test_example_wit("simple")
+fn wit_tests() -> Result<()> {
+    fs::read_dir(current_dir()?.join("examples"))?
+        .filter_map(is_dir)
+        .map(test_example_wit)
+        .collect()
 }
