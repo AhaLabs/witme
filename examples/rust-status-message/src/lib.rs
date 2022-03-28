@@ -28,4 +28,13 @@ impl StatusMessage {
     pub fn get_status(&self, account_id: AccountId) -> Option<String> {
         self.records.get(&account_id)
     }
+
+    pub fn get_fun(&self) -> Fun {
+      Fun::default()
+    }
+}
+#[near_sdk::witgen]
+#[derive(Default)]
+pub struct Fun {
+  i: i32
 }
