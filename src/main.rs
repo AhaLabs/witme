@@ -12,7 +12,7 @@ use std::{
     fs::{self, read, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
-    process::Command,
+    process::{Command, Stdio},
     time::SystemTime,
 };
 
@@ -123,7 +123,7 @@ fn run_generate(cli_args: opt::Command) -> Result<()> {
             }
             write_file(&filename, &wit_str)
         }
-        opt::Command::Json { input, out_dir } => generate_json_schema(&input, &out_dir),
+        opt::Command::Json { input, out_dir, args } => generate_json_schema(&input, &out_dir, args),
     }
 }
 
@@ -154,16 +154,21 @@ fn ts_from_wit_file(input: &Path, out_dir: &Path) -> Result<()> {
     generate_typescript(&out_dir.to_path_buf(), &content)
 }
 
-fn generate_json_schema(input: &Path, out_dir: &Path) -> Result<()> {
+fn generate_json_schema(input: &Path, out_dir: &Path, args: Vec<String>) -> Result<()> {
     Command::new("npx")
         .arg("ts-json-schema-generator")
         .arg("-p")
         .arg(input)
         .arg("--validation-keywords")
         .arg("contractMethod")
+        .arg("--validation-keywords")
+        .arg("allow")
         .arg("--no-type-check")
         .arg("-o")
         .arg(out_dir.join("index.schema.json"))
+        .args(args)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .output()
         .expect("failed to execute process");
     Ok(())

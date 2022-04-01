@@ -72,5 +72,11 @@ pub enum Command {
         /// output for JSON schema
         #[clap(long, name = "directory", short = 'o', default_value = ".")]
         out_dir: PathBuf,
+
+        /// Arguments to be passed to `ts-json-schema-generator`.
+        /// 
+        /// Can mostly ignore. `-- --help` for more info
+        #[clap(last = true)]
+        args: Vec<String>,
     },
 }
