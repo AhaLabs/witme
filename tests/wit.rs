@@ -1,7 +1,15 @@
 use anyhow::Result;
 use assert_cmd::Command;
 use assert_fs::prelude::*;
-use std::{env::current_dir, fs, fs::DirEntry, io::Read, path::{Path, PathBuf}};
+use cargo_witgen::Witgen;
+use std::{
+    env::current_dir,
+    fs,
+    fs::DirEntry,
+    io::Read,
+    path::{Path, PathBuf},
+};
+use witme::near::{transform_pass, Transformer};
 
 fn cmd<'a>() -> Result<Command> {
     Ok(Command::cargo_bin("witme")?)
@@ -63,4 +71,66 @@ fn wit_tests() -> Result<()> {
         .filter_map(is_dir)
         .map(test_example_wit)
         .collect()
+}
+
+struct Unit {}
+
+impl Transformer for Unit {
+    fn transform(&self, i: syn::Item) -> Vec<syn::Item> {
+        vec![i]
+    }
+}
+
+struct NoImpl {}
+
+impl Transformer for NoImpl {
+    fn transform(&self, i: syn::Item) -> Vec<syn::Item> {
+        match i {
+            syn::Item::Impl(_) => vec![],
+            _ => vec![i],
+        }
+    }
+}
+// impl Unit for Empty {}
+
+#[test]
+fn transform() -> Result<()> {
+    let witgen = Witgen {
+        input_dir: PathBuf::from(&"examples/counter"),
+        output: PathBuf::from(&"index.wit"),
+        prefix_file: vec![],
+        prefix_string: vec![],
+        stdout: false,
+        input: None,
+    };
+
+    let file = witgen.read_input()?;
+    let file_copy = transform_pass(file.clone(), &Unit {});
+
+    assert_eq!(file, file_copy);
+    Ok(())
+}
+
+#[test]
+fn transform_no_impl() -> Result<()> {
+    let witgen = Witgen {
+        input_dir: PathBuf::from(&"examples/counter"),
+        output: PathBuf::from(&"index.wit"),
+        prefix_file: vec![],
+        prefix_string: vec![],
+        stdout: false,
+        input: None,
+    };
+
+    let file = witgen.read_input()?;
+    let file_copy = transform_pass(file.clone(), &NoImpl {});
+
+    assert_eq!(
+        file.items
+            .into_iter()
+            .filter(|i| !matches!(i, syn::Item::Impl(_)))
+            .collect::<Vec<syn::Item>>(),
+        file_copy.items
+    );
+    Ok(())
 }

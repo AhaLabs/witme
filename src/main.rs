@@ -1,4 +1,4 @@
-#![deny(warnings)]
+// #![deny(warnings)]
 #![doc = include_str!("../README.md")]
 use std::env;
 
@@ -8,6 +8,7 @@ use clap::{crate_version, FromArgMatches, IntoApp};
 
 mod app;
 mod embeded;
+mod near;
 use crate::app::WitMe;
 
 fn main() -> Result<()> {

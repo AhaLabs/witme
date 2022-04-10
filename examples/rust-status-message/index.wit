@@ -1,6 +1,16 @@
 // This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (cargo-witgen v0.12.0) 
 
 
+///  change
+default: function()
+///  Store a message for current signer account
+///  change
+set-status: function(message: string)
+///  Retreive a message for a given account id
+get-status: function(account-id: account-id) -> option<string>
+
+get-fun: function() -> fun
+
 record fun {
     i: s32
 }

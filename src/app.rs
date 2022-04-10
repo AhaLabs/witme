@@ -8,6 +8,7 @@ use std::{
 use anyhow::Result;
 use cargo_witgen::Witgen;
 use clap::Parser;
+use near_sdk_wit::ItemImplInfo;
 use wit_bindgen_gen_ts_near::generate_typescript;
 
 use crate::embeded;
@@ -95,7 +96,9 @@ impl NearCommand {
                 standards,
                 ..
             } => {
-                let mut wit_str = witgen.generate_str()?;
+                let input = witgen.read_input()?;
+                let input = crate::near::transform_pass(input, &ImplToFns {});
+                let mut wit_str = witgen.generate_str(input)?;
                 if sdk || standards {
                     wit_str.push_str(embeded::SDK);
                     if standards {
@@ -106,7 +109,7 @@ impl NearCommand {
                 if let Some(ts_path) = typescript {
                     generate_typescript(&ts_path, &wit_str)?;
                 }
-                witgen.output_wit_str(&wit_str)
+                witgen.write_output(&wit_str)
             }
             NearCommand::Json {
                 input,
@@ -141,3 +144,23 @@ fn generate_json_schema(input: &Path, out_dir: &Path, args: Vec<String>) -> Resu
         .expect("failed to execute process");
     Ok(())
 }
+
+pub struct ImplToFns {}
+
+impl crate::near::Transformer for ImplToFns {
+    fn transform(&self, i: syn::Item) -> Vec<syn::Item> {
+        match i {
+            syn::Item::Impl(mut input) => {
+                let impl_info = ItemImplInfo::new(&mut input).unwrap();
+                let res: Vec<syn::Item> = impl_info
+                    .methods
+                    .into_iter()
+                    .filter_map(|method| method.try_into().ok())
+                    .collect();
+                res
+            }
+            _ => vec![i],
+        }
+    }
+}
+

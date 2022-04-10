@@ -1,11 +1,18 @@
 [package]
 authors = ["Willem Wyndham <willem@ahalabs.dev>"]
-edition = "2018"
+edition = "2021"
 license = "Apache-2.0"
 name = "near-sdk-wit"
 publish = false
 repository = "https://github.com/ahalabs/witme"
 version = "0.1.0"
+
+[dependencies]
+proc-macro2 = { version = "1.0.32", features = ["span-locations"] }
+quote = "1.0.10"
+syn = { version = "1.0.82", features = ["full", "extra-traits"] }
+anyhow = "1.0.51"
+
 
 [dev-dependencies]
 near-sdk = { git = "https://github.com/ahalabs/near-sdk-rs", tag = "v4.0.0-4" }

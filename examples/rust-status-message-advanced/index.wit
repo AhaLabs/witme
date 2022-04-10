@@ -7,6 +7,14 @@ record message {
 ///  @pattern ^TEXT:
     text: string
 }
+
+///  change
+default: function()
+///  A change call to set the message
+///  change
+set-message: function(message: message)
+///  A view call to get the current message
+get-message: function() -> message
 // This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v0.2.0) 
 
 ///  StorageUsage is used to count the amount of storage used by a contract.
