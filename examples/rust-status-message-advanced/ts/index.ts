@@ -19,6 +19,16 @@ import {
 } from './helper';
 
 /**
+* A message that contains some text
+*/
+export interface Message {
+  /**
+  * Inner string value
+  * @pattern ^TEXT:
+  */
+  text: string;
+}
+/**
 * StorageUsage is used to count the amount of storage used by a contract.
 */
 export type StorageUsage = u64;
@@ -60,82 +70,3 @@ export type PublicKey = string;
 * Raw type for timestamp in nanoseconds
 */
 export type Timestamp = u64;
-/**
-* A message that contains some text
-*/
-export interface Message {
-  /**
-  * Inner string value
-  * @pattern ^TEXT:
-  */
-  text: string;
-}
-
-export class Contract {
-  
-  constructor(public account: Account, public readonly contractId: string){}
-  
-  /**
-  * A change call to set the message
-  */
-  async set_message(args: {
-    message: Message;
-  }, options?: ChangeMethodOptions): Promise<void> {
-    return providers.getTransactionLastResult(await this.set_messageRaw(args, options));
-  }
-  /**
-  * A change call to set the message
-  */
-  set_messageRaw(args: {
-    message: Message;
-  }, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
-    return this.account.functionCall({contractId: this.contractId, methodName: "set_message", args, ...options});
-  }
-  /**
-  * A change call to set the message
-  */
-  set_messageTx(args: {
-    message: Message;
-  }, options?: ChangeMethodOptions): transactions.Action {
-    return transactions.functionCall("set_message", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
-  }
-  /**
-  * A view call to get the current message
-  */
-  get_message(args = {}, options?: ViewFunctionOptions): Promise<Message> {
-    return this.account.viewFunction(this.contractId, "get_message", args, options);
-  }
-}
-/**
-* A change call to set the message
-* 
-* @contractMethod change
-*/
-export interface SetMessage {
-  args: {
-    message: Message;
-  };
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
-  
-}
-export type SetMessage__Result = void;
-/**
-* A view call to get the current message
-* 
-* @contractMethod view
-*/
-export interface GetMessage {
-  args: {};
-  
-}
-export type GetMessage__Result = Message;

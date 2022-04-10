@@ -18,6 +18,9 @@ import {
   ViewFunctionOptions,
 } from './helper';
 
+export interface Fun {
+  i: i32;
+}
 /**
 * StorageUsage is used to count the amount of storage used by a contract.
 */
@@ -60,91 +63,3 @@ export type PublicKey = string;
 * Raw type for timestamp in nanoseconds
 */
 export type Timestamp = u64;
-export interface Fun {
-  i: i32;
-}
-
-export class Contract {
-  
-  constructor(public account: Account, public readonly contractId: string){}
-  
-  /**
-  * Retreive a message for a given account id
-  */
-  get_status(args: {
-    account_id: AccountId;
-  }, options?: ViewFunctionOptions): Promise<string | null> {
-    return this.account.viewFunction(this.contractId, "get_status", args, options);
-  }
-  get_fun(args = {}, options?: ViewFunctionOptions): Promise<Fun> {
-    return this.account.viewFunction(this.contractId, "get_fun", args, options);
-  }
-  /**
-  * Store a message for current signer account
-  */
-  async set_status(args: {
-    message: string;
-  }, options?: ChangeMethodOptions): Promise<void> {
-    return providers.getTransactionLastResult(await this.set_statusRaw(args, options));
-  }
-  /**
-  * Store a message for current signer account
-  */
-  set_statusRaw(args: {
-    message: string;
-  }, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
-    return this.account.functionCall({contractId: this.contractId, methodName: "set_status", args, ...options});
-  }
-  /**
-  * Store a message for current signer account
-  */
-  set_statusTx(args: {
-    message: string;
-  }, options?: ChangeMethodOptions): transactions.Action {
-    return transactions.functionCall("set_status", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
-  }
-}
-/**
-* Retreive a message for a given account id
-* 
-* @contractMethod view
-*/
-export interface GetStatus {
-  args: {
-    account_id: AccountId;
-  };
-  
-}
-export type GetStatus__Result = string | null;
-/**
-* 
-* @contractMethod view
-*/
-export interface GetFun {
-  args: {};
-  
-}
-export type GetFun__Result = Fun;
-/**
-* Store a message for current signer account
-* 
-* @contractMethod change
-*/
-export interface SetStatus {
-  args: {
-    message: string;
-  };
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
-  
-}
-export type SetStatus__Result = void;

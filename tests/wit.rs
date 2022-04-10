@@ -46,9 +46,7 @@ fn test_example_wit(example: PathBuf) -> Result<()> {
     let mut actual = String::new();
     f.read_to_string(&mut contents)?;
     actual_file.read_to_string(&mut actual)?;
-    let contents_vec = contents.split('\n').collect::<Vec<&str>>().sort();
-    let actual_vec = actual.split('\n').collect::<Vec<&str>>().sort();
-    assert_eq!(contents_vec, actual_vec);
+    assert_eq!(contents, actual);
     Ok(())
 }
 

@@ -15,42 +15,6 @@
       "description": "base64 string.",
       "type": "string"
     },
-    "Decrement": {
-      "additionalProperties": false,
-      "contractMethod": "change",
-      "description": "Decrement (subtract from) the counter.\n\n```bash near call counter.YOU.testnet decrement --accountId donation.YOU.testnet ```",
-      "properties": {
-        "args": {
-          "additionalProperties": false,
-          "type": "object"
-        },
-        "options": {
-          "additionalProperties": false,
-          "properties": {
-            "attachedDeposit": {
-              "$ref": "#/definitions/Balance",
-              "default": "0",
-              "description": "Units in yoctoNear"
-            },
-            "gas": {
-              "default": "30000000000000",
-              "description": "Units in gas",
-              "pattern": "[0-9]+",
-              "type": "string"
-            }
-          },
-          "type": "object"
-        }
-      },
-      "required": [
-        "args",
-        "options"
-      ],
-      "type": "object"
-    },
-    "Decrement__Result": {
-      "type": "null"
-    },
     "Duration": {
       "$ref": "#/definitions/u64",
       "description": "Raw type for duration in nanoseconds"
@@ -59,99 +23,9 @@
       "$ref": "#/definitions/u64",
       "description": "Represents the amount of NEAR tokens in \"gas units\" which are used to fund transactions."
     },
-    "GetNum": {
-      "additionalProperties": false,
-      "contractMethod": "view",
-      "description": "Returns 8-bit signed integer of the counter value.\n\nThis must match the type from our struct's 'val' defined above.\n\nNote, the parameter is `&self` (without being mutable) meaning it doesn't modify state. In the frontend (/src/main.js) this is added to the \"viewMethods\" array using near-cli we can call this by:\n\n```bash near view counter.YOU.testnet get_num ```",
-      "properties": {
-        "args": {
-          "additionalProperties": false,
-          "type": "object"
-        }
-      },
-      "required": [
-        "args"
-      ],
-      "type": "object"
-    },
-    "GetNum__Result": {
-      "$ref": "#/definitions/i8"
-    },
-    "Increment": {
-      "additionalProperties": false,
-      "contractMethod": "change",
-      "description": "Increment the counter.\n\nNote, the parameter is \"&mut self\" as this function modifies state. In the frontend (/src/main.js) this is added to the \"changeMethods\" array using near-cli we can call this by:\n\n```bash near call counter.YOU.testnet increment --accountId donation.YOU.testnet ```",
-      "properties": {
-        "args": {
-          "additionalProperties": false,
-          "type": "object"
-        },
-        "options": {
-          "additionalProperties": false,
-          "properties": {
-            "attachedDeposit": {
-              "$ref": "#/definitions/Balance",
-              "default": "0",
-              "description": "Units in yoctoNear"
-            },
-            "gas": {
-              "default": "30000000000000",
-              "description": "Units in gas",
-              "pattern": "[0-9]+",
-              "type": "string"
-            }
-          },
-          "type": "object"
-        }
-      },
-      "required": [
-        "args",
-        "options"
-      ],
-      "type": "object"
-    },
-    "Increment__Result": {
-      "type": "null"
-    },
     "PublicKey": {
       "description": "Public key in a binary format with base58 string serialization with human-readable curve. The key types currently supported are `secp256k1` and `ed25519`.\n\nEd25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.",
       "type": "string"
-    },
-    "Reset": {
-      "additionalProperties": false,
-      "contractMethod": "change",
-      "description": "Reset to zero.",
-      "properties": {
-        "args": {
-          "additionalProperties": false,
-          "type": "object"
-        },
-        "options": {
-          "additionalProperties": false,
-          "properties": {
-            "attachedDeposit": {
-              "$ref": "#/definitions/Balance",
-              "default": "0",
-              "description": "Units in yoctoNear"
-            },
-            "gas": {
-              "default": "30000000000000",
-              "description": "Units in gas",
-              "pattern": "[0-9]+",
-              "type": "string"
-            }
-          },
-          "type": "object"
-        }
-      },
-      "required": [
-        "args",
-        "options"
-      ],
-      "type": "object"
-    },
-    "Reset__Result": {
-      "type": "null"
     },
     "StorageUsage": {
       "$ref": "#/definitions/u64",
@@ -165,11 +39,6 @@
       "description": "String representation of a u128-bit integer",
       "pattern": "^[0-9]+$",
       "type": "string"
-    },
-    "i8": {
-      "maximum": 127,
-      "minimum": -128,
-      "type": "integer"
     },
     "u64": {
       "maximum": 18446744073709552000,
