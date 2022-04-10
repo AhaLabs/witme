@@ -25,14 +25,14 @@ static TARGET_PATH: OnceCell<PathBuf> = OnceCell::new();
 
 fn main() -> Result<()> {
     let args = env::args_os();
-    let matches = WitMe::into_app()
+    let matches = WitMe::command()
         .version(crate_version!())
         .bin_name("witme")
         // .setting(AppSettings::NoBinaryName)
         .get_matches_from(args);
 
     let witme =
-        WitMe::from_arg_matches(&matches).ok_or_else(|| anyhow::anyhow!("Command not found"))?;
+        WitMe::from_arg_matches(&matches).context("Command not found")?;
 
     match witme.top_level_command {
         opt::TopLevelCommand::Near(command) => run_generate(command),
