@@ -15,12 +15,6 @@ pub trait Transformer {
     fn transform(&self, i: Item) -> Vec<Item>;
 }
 
-pub trait Unit: Transformer {
-  fn transform(&self, i: Item) -> Vec<Item> {
-    vec![i]
-  }
-}
-
 pub fn transform_pass(file: File, transformer: &dyn Transformer) -> File {
     let mut file = file;
     file.items = transform_vec(file.items, transformer);

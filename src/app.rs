@@ -11,7 +11,7 @@ use clap::Parser;
 use near_sdk_wit::ItemImplInfo;
 use wit_bindgen_gen_ts_near::generate_typescript;
 
-use crate::embeded;
+use crate::{embeded, near::has_macro};
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -150,17 +150,16 @@ pub struct ImplToFns {}
 impl crate::near::Transformer for ImplToFns {
     fn transform(&self, i: syn::Item) -> Vec<syn::Item> {
         match i {
-            syn::Item::Impl(mut input) => {
+            syn::Item::Impl(mut input) if has_macro(&Some(&input.attrs), "near_bindgen") => {
                 let impl_info = ItemImplInfo::new(&mut input).unwrap();
-                let res: Vec<syn::Item> = impl_info
+                impl_info
                     .methods
                     .into_iter()
+                    .filter(|m| m.is_public)
                     .filter_map(|method| method.try_into().ok())
-                    .collect();
-                res
+                    .collect()
             }
             _ => vec![i],
         }
     }
 }
-
