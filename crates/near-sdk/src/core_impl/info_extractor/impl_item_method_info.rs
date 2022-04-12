@@ -39,8 +39,13 @@ impl TryInto<syn::Item> for ImplItemMethodInfo {
             receiver,
             returns,
             method_type,
+            is_private,
             ..
         } = &self.attr_signature_info;
+
+        if *is_private {
+            anyhow::bail!("Can't generate private method")
+        }
 
         let non_bindgen_attrs = non_bindgen_attrs
             .iter()
