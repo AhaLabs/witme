@@ -22,7 +22,7 @@ proc-macro2 = { version = "1.0.32", features = ["span-locations"] }
 quote = "1.0.10"
 syn = { version = "1.0.82", features = ["full", "extra-traits"] }
 syn-file-expand = "0.1.1"
-near-sdk-wit = {path="./crates/near-sdk"}
+near-sdk-wit = { path="./crates/near-sdk-witgen", version = "0.2.4" }
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

@@ -34,7 +34,7 @@ pub fn transform(item: Item, transformer: &dyn Transformer) -> Vec<Item> {
         Item::Mod(mut m) => {
             m.content = m
                 .content
-                .map(|(b, items)| (b.clone(), transform_vec(items, transformer)));
+                .map(|(b, items)| (b, transform_vec(items, transformer)));
             vec![Item::Mod(m)]
         }
         _ => (transformer.transform(item)).to_vec(),

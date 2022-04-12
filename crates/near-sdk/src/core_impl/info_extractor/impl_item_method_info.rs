@@ -38,10 +38,7 @@ impl TryInto<syn::Item> for ImplItemMethodInfo {
             ident,
             receiver,
             returns,
-            result_serializer,
             method_type,
-            is_payable,
-            is_private,
             ..
         } = &self.attr_signature_info;
 

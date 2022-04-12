@@ -122,7 +122,7 @@ impl NearCommand {
 
 fn ts_from_wit_file(input: &Path, out_dir: &Path) -> Result<()> {
     let content = String::from_utf8(fs::read(input)?)?;
-    generate_typescript(&out_dir.to_path_buf(), &content)
+    generate_typescript(out_dir, &content)
 }
 
 fn generate_json_schema(input: &Path, out_dir: &Path, args: Vec<String>) -> Result<()> {
