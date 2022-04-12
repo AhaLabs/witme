@@ -8,7 +8,7 @@ use std::{
 use anyhow::Result;
 use cargo_witgen::Witgen;
 use clap::Parser;
-use near_sdk_wit::ItemImplInfo;
+use near_sdk_witgen::ItemImplInfo;
 use wit_bindgen_gen_ts_near::generate_typescript;
 
 use crate::{embeded, near::has_macro};
