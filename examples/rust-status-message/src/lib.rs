@@ -30,11 +30,11 @@ impl StatusMessage {
     }
 
     pub fn get_fun(&self) -> Fun {
-      Fun::default()
+        Fun::default()
     }
 }
 #[near_sdk::witgen]
 #[derive(Default)]
 pub struct Fun {
-  i: i32
+    i: i32,
 }

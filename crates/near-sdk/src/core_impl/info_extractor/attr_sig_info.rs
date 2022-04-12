@@ -142,23 +142,30 @@ impl AttrSigInfo {
             original_sig: original_sig.clone(),
         };
 
-        let input_serializer =
-            if result.input_args().all(|arg: &ArgInfo| arg.serializer_ty == SerializerType::JSON) {
-                SerializerType::JSON
-            } else if result.input_args().all(|arg| arg.serializer_ty == SerializerType::Borsh) {
-                SerializerType::Borsh
-            } else {
-                return Err(Error::new(
-                    Span::call_site(),
-                    "Input arguments should be all of the same serialization type.",
-                ));
-            };
+        let input_serializer = if result
+            .input_args()
+            .all(|arg: &ArgInfo| arg.serializer_ty == SerializerType::JSON)
+        {
+            SerializerType::JSON
+        } else if result
+            .input_args()
+            .all(|arg| arg.serializer_ty == SerializerType::Borsh)
+        {
+            SerializerType::Borsh
+        } else {
+            return Err(Error::new(
+                Span::call_site(),
+                "Input arguments should be all of the same serialization type.",
+            ));
+        };
         result.input_serializer = input_serializer;
         Ok(result)
     }
 
     /// Only get args that correspond to `env::input()`.
     pub fn input_args(&self) -> impl Iterator<Item = &ArgInfo> {
-        self.args.iter().filter(|arg| matches!(arg.bindgen_ty, BindgenArgType::Regular))
+        self.args
+            .iter()
+            .filter(|arg| matches!(arg.bindgen_ty, BindgenArgType::Regular))
     }
 }

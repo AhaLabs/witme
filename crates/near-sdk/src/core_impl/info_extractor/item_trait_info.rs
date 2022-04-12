@@ -43,6 +43,10 @@ impl ItemTraitInfo {
                 _ => {}
             }
         }
-        Ok(Self { original: original.clone(), mod_name, methods })
+        Ok(Self {
+            original: original.clone(),
+            mod_name,
+            methods,
+        })
     }
 }

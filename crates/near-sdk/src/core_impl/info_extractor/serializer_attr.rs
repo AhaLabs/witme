@@ -19,6 +19,9 @@ impl Parse for SerializerAttr {
             "json" => SerializerType::JSON,
             _ => return Err(Error::new(input.span(), "Unsupported serializer type.")),
         };
-        Ok(Self { paren_token, serializer_type })
+        Ok(Self {
+            paren_token,
+            serializer_type,
+        })
     }
 }

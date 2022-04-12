@@ -5,7 +5,6 @@ use std::env;
 use anyhow::{Context, Result};
 use clap::{crate_version, FromArgMatches, IntoApp};
 
-
 mod app;
 mod embeded;
 mod near;

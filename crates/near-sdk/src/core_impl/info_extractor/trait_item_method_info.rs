@@ -30,6 +30,10 @@ impl TraitItemMethodInfo {
         let ident_byte_str =
             LitStr::new(&attr_sig_info.ident.to_string(), attr_sig_info.ident.span());
 
-        Ok(Self { attr_sig_info, original: original.clone(), ident_byte_str })
+        Ok(Self {
+            attr_sig_info,
+            original: original.clone(),
+            ident_byte_str,
+        })
     }
 }

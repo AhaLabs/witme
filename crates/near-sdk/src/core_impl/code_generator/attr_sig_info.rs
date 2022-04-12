@@ -84,7 +84,9 @@ impl AttrSigInfo {
         );
         let mut fields = TokenStream2::new();
         for arg in args {
-            let ArgInfo { mutability, ident, .. } = &arg;
+            let ArgInfo {
+                mutability, ident, ..
+            } = &arg;
             fields.extend(quote! {
             #mutability #ident,
             });
@@ -135,7 +137,12 @@ impl AttrSigInfo {
     pub fn arg_list(&self) -> TokenStream2 {
         let mut result = TokenStream2::new();
         for arg in &self.args {
-            let ArgInfo { reference, mutability, ident, .. } = &arg;
+            let ArgInfo {
+                reference,
+                mutability,
+                ident,
+                ..
+            } = &arg;
             result.extend(quote! {
                 #reference #mutability #ident,
             });

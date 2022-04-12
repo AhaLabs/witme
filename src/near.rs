@@ -40,4 +40,3 @@ pub fn transform(item: Item, transformer: &dyn Transformer) -> Vec<Item> {
         _ => (transformer.transform(item)).to_vec(),
     }
 }
-

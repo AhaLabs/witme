@@ -30,6 +30,10 @@ impl ItemImplInfo {
                 methods.push(method_info);
             }
         }
-        Ok(Self { is_trait_impl, ty, methods })
+        Ok(Self {
+            is_trait_impl,
+            ty,
+            methods,
+        })
     }
 }
