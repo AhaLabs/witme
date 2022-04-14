@@ -76,6 +76,12 @@ export class Contract {
   constructor(public account: Account, public readonly contractId: string){}
   
   /**
+  * A view call to get the current message
+  */
+  get_message(args = {}, options?: ViewFunctionOptions): Promise<Message> {
+    return this.account.viewFunction(this.contractId, "get_message", args, options);
+  }
+  /**
   * A change call to set the message
   */
   async set_message(args: {
@@ -99,13 +105,17 @@ export class Contract {
   }, options?: ChangeMethodOptions): transactions.Action {
     return transactions.functionCall("set_message", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
   }
-  /**
-  * A view call to get the current message
-  */
-  get_message(args = {}, options?: ViewFunctionOptions): Promise<Message> {
-    return this.account.viewFunction(this.contractId, "get_message", args, options);
-  }
 }
+/**
+* A view call to get the current message
+* 
+* @contractMethod view
+*/
+export interface GetMessage {
+  args: {};
+  
+}
+export type GetMessage__Result = Message;
 /**
 * A change call to set the message
 * 
@@ -129,13 +139,3 @@ export interface SetMessage {
   
 }
 export type SetMessage__Result = void;
-/**
-* A view call to get the current message
-* 
-* @contractMethod view
-*/
-export interface GetMessage {
-  args: {};
-  
-}
-export type GetMessage__Result = Message;
