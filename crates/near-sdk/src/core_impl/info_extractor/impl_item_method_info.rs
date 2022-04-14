@@ -1,7 +1,8 @@
 use crate::core_impl::info_extractor::AttrSigInfo;
+use crate::ItemImplInfo;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-use syn::{ImplItemMethod, ItemFn, ReturnType, Type, Visibility};
+use syn::{Attribute, ImplItemMethod, Item, ItemFn, ReturnType, Type, Visibility};
 
 use super::ArgInfo;
 
@@ -104,5 +105,60 @@ impl TryInto<syn::Item> for ImplItemMethodInfo {
             },
             |f| Ok(syn::Item::Fn(f)),
         )
+    }
+}
+
+use syn::visit::Visit;
+use syn::ItemImpl;
+
+pub struct ImplVisitor {
+    pub functions: Vec<ItemFn>,
+}
+
+impl ImplVisitor {
+    pub fn to_items(self) -> Vec<syn::Item> {
+        self.functions.into_iter().map(syn::Item::Fn).collect()
+    }
+
+    pub fn find_items_in_file(ast: &syn::File) -> Vec<syn::Item> {
+        let mut visitor = ImplVisitor {
+            functions: Vec::new(),
+        };
+        visitor.visit_file(ast);
+        visitor.to_items()
+    }
+}
+
+pub fn has_macro(attrs: &Option<&[Attribute]>, macro_name: &str) -> bool {
+    attrs.map_or(false, |attrs| {
+        for attr in attrs.iter() {
+            if format!("{:#?}", attr.path).contains(macro_name) {
+                return true;
+            }
+        }
+        false
+    })
+}
+
+impl<'ast> Visit<'ast> for ImplVisitor {
+    fn visit_item_impl(&mut self, node: &'ast ItemImpl) {
+        if !has_macro(&Some(&node.attrs), "near_bindgen") {
+            return;
+        }
+        let mut input = node.clone();
+        let impl_info = ItemImplInfo::new(&mut input).unwrap();
+        let impls: Vec<Item> = impl_info
+            .methods
+            .into_iter()
+            .filter(|m| m.is_public || impl_info.is_trait_impl)
+            .filter_map(|method| method.try_into().ok())
+            .collect();
+
+        for item in impls {
+            if let Item::Fn(i) = item {
+                self.functions.push(i);
+            }
+        }
+        // visit::visit_item_impl(self, node);
     }
 }

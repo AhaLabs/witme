@@ -8,10 +8,10 @@ use std::{
 use anyhow::Result;
 use cargo_witgen::Witgen;
 use clap::Parser;
-use near_sdk_witgen::ItemImplInfo;
+use near_sdk_witgen::ImplVisitor;
 use wit_bindgen_gen_ts_near::generate_typescript;
 
-use crate::{embeded, near::has_macro};
+use crate::embeded;
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -96,8 +96,9 @@ impl NearCommand {
                 standards,
                 ..
             } => {
-                let input = witgen.read_input()?;
-                let input = crate::near::transform_pass(input, &ImplToFns {});
+                let mut input = witgen.read_input()?;
+                let mut items = ImplVisitor::find_items_in_file(&input);
+                input.items.append(&mut items);
                 let mut wit_str = witgen.generate_str(input)?;
                 if sdk || standards {
                     wit_str.push_str(embeded::SDK);
@@ -143,23 +144,4 @@ fn generate_json_schema(input: &Path, out_dir: &Path, args: Vec<String>) -> Resu
         .output()
         .expect("failed to execute process");
     Ok(())
-}
-
-pub struct ImplToFns {}
-
-impl crate::near::Transformer for ImplToFns {
-    fn transform(&self, i: syn::Item) -> Vec<syn::Item> {
-        match i {
-            syn::Item::Impl(mut input) if has_macro(&Some(&input.attrs), "near_bindgen") => {
-                let impl_info = ItemImplInfo::new(&mut input).unwrap();
-                impl_info
-                    .methods
-                    .into_iter()
-                    .filter(|m| m.is_public)
-                    .filter_map(|method| method.try_into().ok())
-                    .collect()
-            }
-            _ => vec![i],
-        }
-    }
 }

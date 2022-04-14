@@ -7,7 +7,6 @@ use clap::{crate_version, FromArgMatches, IntoApp};
 
 mod app;
 mod embeded;
-mod near;
 use crate::app::WitMe;
 
 fn main() -> Result<()> {

@@ -8,7 +8,7 @@ mod attr_sig_info;
 pub use attr_sig_info::AttrSigInfo;
 
 mod impl_item_method_info;
-pub use impl_item_method_info::ImplItemMethodInfo;
+pub use impl_item_method_info::{ImplItemMethodInfo, ImplVisitor};
 
 mod trait_item_method_info;
 pub use trait_item_method_info::*;
