@@ -8,8 +8,6 @@ record message {
     text: string
 }
 
-///  change
-default: function()
 ///  A change call to set the message
 ///  change
 set-message: function(message: message)

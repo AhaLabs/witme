@@ -75,15 +75,6 @@ export class Contract {
   
   constructor(public account: Account, public readonly contractId: string){}
   
-  async default(args = {}, options?: ChangeMethodOptions): Promise<void> {
-    return providers.getTransactionLastResult(await this.defaultRaw(args, options));
-  }
-  defaultRaw(args = {}, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
-    return this.account.functionCall({contractId: this.contractId, methodName: "default", args, ...options});
-  }
-  defaultTx(args = {}, options?: ChangeMethodOptions): transactions.Action {
-    return transactions.functionCall("default", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
-  }
   /**
   * A change call to set the message
   */
@@ -115,26 +106,6 @@ export class Contract {
     return this.account.viewFunction(this.contractId, "get_message", args, options);
   }
 }
-/**
-* 
-* @contractMethod change
-*/
-export interface Default {
-  args: {};
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
-  
-}
-export type Default__Result = void;
 /**
 * A change call to set the message
 * 
