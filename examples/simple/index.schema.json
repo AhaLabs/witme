@@ -692,6 +692,20 @@
       "type": "object"
     },
     "TestTuple": {
+      "description": "Documentation over struct in multi-line",
+      "items": [
+        {
+          "$ref": "#/definitions/u64"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "TestTupleFn": {
       "additionalProperties": false,
       "contractMethod": "view",
       "properties": {
@@ -757,7 +771,7 @@
       ],
       "type": "object"
     },
-    "TestTuple__Result": {
+    "TestTupleFn__Result": {
       "items": [
         {
           "type": "string"

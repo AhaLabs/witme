@@ -1,6 +1,20 @@
-// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v0.2.3) 
+// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (cargo-witgen v0.12.0) 
 
-// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v0.2.0) 
+
+
+///  A message that contains some text
+record message {
+    ///  Inner string value
+///  @pattern ^TEXT:
+    text: string
+}
+
+///  A view call to get the current message
+get-message: function() -> message
+
+///  A change call to set the message
+///  change
+set-message: function(message: message)// This is a generated file by witgen (https://github.com/bnjjj/witgen), please do not edit yourself, you can generate a new one thanks to cargo witgen generate command. (witme v0.2.0) 
 
 ///  StorageUsage is used to count the amount of storage used by a contract.
 type storage-usage = u64
@@ -34,19 +48,4 @@ type public-key = string
 
 ///  Raw type for timestamp in nanoseconds
 type timestamp = u64
-
-///  A change call to set the message
-///  change
-set-message: function(message: message)
-
-///  A view call to get the current message
-get-message: function() -> message
-
-
-///  A message that contains some text
-record message {
-    ///  Inner string value
-///  @pattern ^TEXT:
-    text: string
-}
 

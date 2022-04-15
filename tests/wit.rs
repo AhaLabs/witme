@@ -1,9 +1,15 @@
 use anyhow::Result;
 use assert_cmd::Command;
 use assert_fs::prelude::*;
-use std::{env::current_dir, fs, fs::DirEntry, io::Read, path::{Path, PathBuf}};
+use std::{
+    env::current_dir,
+    fs,
+    fs::DirEntry,
+    io::Read,
+    path::{Path, PathBuf},
+};
 
-fn cmd<'a>() -> Result<Command> {
+fn cmd() -> Result<Command> {
     Ok(Command::cargo_bin("witme")?)
 }
 
@@ -20,7 +26,7 @@ fn help_case() -> Result<()> {
     Ok(())
 }
 
-fn near_cmd<'a>(example: &Path) -> Result<Command> {
+fn near_cmd(example: &Path) -> Result<Command> {
     let mut c = cmd()?;
     c.current_dir(example).arg("near");
     Ok(c)
@@ -46,9 +52,7 @@ fn test_example_wit(example: PathBuf) -> Result<()> {
     let mut actual = String::new();
     f.read_to_string(&mut contents)?;
     actual_file.read_to_string(&mut actual)?;
-    let contents_vec = contents.split('\n').collect::<Vec<&str>>().sort();
-    let actual_vec = actual.split('\n').collect::<Vec<&str>>().sort();
-    assert_eq!(contents_vec, actual_vec);
+    assert_eq!(contents, actual);
     Ok(())
 }
 
@@ -63,6 +67,5 @@ fn is_dir(d: Result<DirEntry, std::io::Error>) -> Option<PathBuf> {
 fn wit_tests() -> Result<()> {
     fs::read_dir(current_dir()?.join("examples"))?
         .filter_map(is_dir)
-        .map(test_example_wit)
-        .collect()
+        .try_for_each(test_example_wit)
 }

@@ -12,11 +12,17 @@ version = "0.2.4"
 
 [dependencies]
 anyhow = "1.0.51"
-cargo_metadata = "0.14.1"
 clap = {version = "=3.1.8", features = ["derive", "cargo"]}
-glob = "0.3.0"
-once_cell = "1.8.0"
 wit-bindgen-gen-ts-near = {path = "crates/gen-ts-near", version = "0.2.1"}
+# cargo-witgen = {path = "../witgen/crates/cargo_witgen"}
+cargo-witgen = "0.12.0"
+# witgen_macro_helper = {path = "../witgen/crates/witgen_macro_helper"}
+# witgen_macro_helper = { git = "https://github.com/ahalabs/witgen", rev = "bcd8dc1c57efb39e90683ac13aec5df843404abd" }
+proc-macro2 = { version = "1.0.32", features = ["span-locations"] }
+quote = "1.0.10"
+syn = { version = "1.0.82", features = ["full", "extra-traits", "visit"] }
+syn-file-expand = "0.1.1"
+near-sdk-witgen = { path="./crates/near-sdk", version = "0.2.4" }
 
 [dev-dependencies]
 assert_cmd = "2.0.4"
@@ -26,3 +32,11 @@ wit-parser = { version = '0.0.2', package = "aha-wit-parser"}
 
 [workspace]
 members = ["examples/*", "crates/*"]
+
+[lib]
+name = "witme"
+path = "src/lib.rs"
+
+[[bin]]
+name = "witme"
+path = "src/main.rs"

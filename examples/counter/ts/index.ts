@@ -82,24 +82,6 @@ export class Contract {
     return this.account.viewFunction(this.contractId, "get_num", args, options);
   }
   /**
-  * Reset to zero.
-  */
-  async reset(args = {}, options?: ChangeMethodOptions): Promise<void> {
-    return providers.getTransactionLastResult(await this.resetRaw(args, options));
-  }
-  /**
-  * Reset to zero.
-  */
-  resetRaw(args = {}, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
-    return this.account.functionCall({contractId: this.contractId, methodName: "reset", args, ...options});
-  }
-  /**
-  * Reset to zero.
-  */
-  resetTx(args = {}, options?: ChangeMethodOptions): transactions.Action {
-    return transactions.functionCall("reset", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
-  }
-  /**
   * Increment the counter.
   * 
   * Note, the parameter is "&mut self" as this function modifies state.
@@ -171,6 +153,24 @@ export class Contract {
   decrementTx(args = {}, options?: ChangeMethodOptions): transactions.Action {
     return transactions.functionCall("decrement", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
   }
+  /**
+  * Reset to zero.
+  */
+  async reset(args = {}, options?: ChangeMethodOptions): Promise<void> {
+    return providers.getTransactionLastResult(await this.resetRaw(args, options));
+  }
+  /**
+  * Reset to zero.
+  */
+  resetRaw(args = {}, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
+    return this.account.functionCall({contractId: this.contractId, methodName: "reset", args, ...options});
+  }
+  /**
+  * Reset to zero.
+  */
+  resetTx(args = {}, options?: ChangeMethodOptions): transactions.Action {
+    return transactions.functionCall("reset", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
+  }
 }
 /**
 * Returns 8-bit signed integer of the counter value.
@@ -192,27 +192,6 @@ export interface GetNum {
   
 }
 export type GetNum__Result = i8;
-/**
-* Reset to zero.
-* 
-* @contractMethod change
-*/
-export interface Reset {
-  args: {};
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
-  
-}
-export type Reset__Result = void;
 /**
 * Increment the counter.
 * 
@@ -267,3 +246,24 @@ export interface Decrement {
   
 }
 export type Decrement__Result = void;
+/**
+* Reset to zero.
+* 
+* @contractMethod change
+*/
+export interface Reset {
+  args: {};
+  options: {
+    /** Units in gas
+    * @pattern [0-9]+
+    * @default "30000000000000"
+    */
+    gas?: string;
+    /** Units in yoctoNear
+    * @default "0"
+    */
+    attachedDeposit?: Balance;
+  }
+  
+}
+export type Reset__Result = void;

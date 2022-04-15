@@ -18,6 +18,9 @@ import {
   ViewFunctionOptions,
 } from './helper';
 
+export interface Fun {
+  i: i32;
+}
 /**
 * StorageUsage is used to count the amount of storage used by a contract.
 */
@@ -60,25 +63,11 @@ export type PublicKey = string;
 * Raw type for timestamp in nanoseconds
 */
 export type Timestamp = u64;
-export interface Fun {
-  i: i32;
-}
 
 export class Contract {
   
   constructor(public account: Account, public readonly contractId: string){}
   
-  /**
-  * Retreive a message for a given account id
-  */
-  get_status(args: {
-    account_id: AccountId;
-  }, options?: ViewFunctionOptions): Promise<string | null> {
-    return this.account.viewFunction(this.contractId, "get_status", args, options);
-  }
-  get_fun(args = {}, options?: ViewFunctionOptions): Promise<Fun> {
-    return this.account.viewFunction(this.contractId, "get_fun", args, options);
-  }
   /**
   * Store a message for current signer account
   */
@@ -103,28 +92,18 @@ export class Contract {
   }, options?: ChangeMethodOptions): transactions.Action {
     return transactions.functionCall("set_status", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
   }
-}
-/**
-* Retreive a message for a given account id
-* 
-* @contractMethod view
-*/
-export interface GetStatus {
-  args: {
+  /**
+  * Retreive a message for a given account id
+  */
+  get_status(args: {
     account_id: AccountId;
-  };
-  
+  }, options?: ViewFunctionOptions): Promise<string | null> {
+    return this.account.viewFunction(this.contractId, "get_status", args, options);
+  }
+  get_fun(args = {}, options?: ViewFunctionOptions): Promise<Fun> {
+    return this.account.viewFunction(this.contractId, "get_fun", args, options);
+  }
 }
-export type GetStatus__Result = string | null;
-/**
-* 
-* @contractMethod view
-*/
-export interface GetFun {
-  args: {};
-  
-}
-export type GetFun__Result = Fun;
 /**
 * Store a message for current signer account
 * 
@@ -148,3 +127,24 @@ export interface SetStatus {
   
 }
 export type SetStatus__Result = void;
+/**
+* Retreive a message for a given account id
+* 
+* @contractMethod view
+*/
+export interface GetStatus {
+  args: {
+    account_id: AccountId;
+  };
+  
+}
+export type GetStatus__Result = string | null;
+/**
+* 
+* @contractMethod view
+*/
+export interface GetFun {
+  args: {};
+  
+}
+export type GetFun__Result = Fun;

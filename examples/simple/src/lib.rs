@@ -101,7 +101,7 @@ enum ComplicatedEnum {
 }
 
 #[witgen]
-fn test_tuple(other: Vec<u8>, test_struct: TestStruct, other_enum: TestEnum) -> (String, i64) {
+fn test_tuple_fn(other: Vec<u8>, test_struct: TestStruct, other_enum: TestEnum) -> (String, i64) {
     (String::from("test"), 0i64)
 }
 
