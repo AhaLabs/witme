@@ -14,7 +14,6 @@ fn main() -> Result<()> {
     let matches = WitMe::command()
         .version(crate_version!())
         .bin_name("witme")
-        // .setting(AppSettings::NoBinaryName)
         .get_matches_from(args);
 
     WitMe::from_arg_matches(&matches)

@@ -1,14 +1,16 @@
 use std::{
     // TODO: make PR to cargo fmt to fix the following line to just `fs,`
     fs::{self},
+    io::Read,
     path::{Path, PathBuf},
     process::{Command, Stdio},
 };
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use cargo_witgen::Witgen;
 use clap::Parser;
 use near_sdk_witgen::ImplVisitor;
+use walrus::{Module, RawCustomSection};
 use wit_bindgen_gen_ts_near::generate_typescript;
 
 use crate::embeded;
@@ -75,6 +77,30 @@ pub enum NearCommand {
         #[clap(last = true)]
         args: Vec<String>,
     },
+
+    /// Inject wit reference into wasm binary. If no data or file argument is provided
+    /// stdin is used
+    Inject {
+        /// Input file of binary to transform
+        #[clap(long, short = 'i')]
+        input: PathBuf,
+
+        /// Output file for transformed binary
+        #[clap(long, short = 'o')]
+        output: PathBuf,
+
+        /// Data to write to custom section
+        #[clap(long, short = 'd')]
+        data: Option<String>,
+
+        /// Data from file to write to custom section
+        #[clap(long, short = 'f')]
+        file: Option<PathBuf>,
+
+        /// Name of custom section
+        #[clap(long, short = 'n', default_value = "json")]
+        name: String,
+    },
 }
 
 impl WitMe {
@@ -117,6 +143,13 @@ impl NearCommand {
                 out_dir,
                 args,
             } => generate_json_schema(&input, &out_dir, args),
+            NearCommand::Inject {
+                input,
+                output,
+                data,
+                file,
+                name,
+            } => inject_wit(&input, &output, name, get_data(data, file)?),
         }
     }
 }
@@ -144,4 +177,29 @@ fn generate_json_schema(input: &Path, out_dir: &Path, args: Vec<String>) -> Resu
         .output()
         .expect("failed to execute process");
     Ok(())
+}
+
+fn get_data(data: Option<String>, file: Option<PathBuf>) -> Result<Vec<u8>> {
+    match (data, file) {
+        (Some(s), None) => Ok(s.as_bytes().to_vec()),
+        (None, Some(f)) => fs::read(f).map_err(anyhow::Error::from),
+        (None, None) => read_stdin(),
+        _ => bail!("Cannot use both 'data' and 'file' arguments"),
+    }
+}
+
+fn read_stdin() -> Result<Vec<u8>> {
+    let mut buf = vec![];
+    std::io::stdin()
+        .lock()
+        .read_to_end(&mut buf)
+        .map_err(anyhow::Error::from)?;
+    Ok(buf)
+}
+
+/// Inject data into a custom section
+pub fn inject_wit(input: &Path, output: &Path, name: String, data: Vec<u8>) -> Result<()> {
+    let mut module = Module::from_file(input)?;
+    module.customs.add(RawCustomSection { name, data });
+    module.emit_wasm_file(output)
 }
