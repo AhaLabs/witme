@@ -4,17 +4,31 @@ exports.getBinary = exports.AWSUrl = void 0;
 const _1 = require(".");
 const path_1 = require("path");
 const os = require("os");
-// function getPlatform() {
-//   const type = os.type();
-//   const arch = os.arch();
-//   if ((type === "Linux" || type === "Darwin") && arch === "x64") {
-//     return [type, "x86_64"];
-//   }
-//   throw new Error(`Unsupported platform: ${type} ${arch}`);
-// }
+const { version } = require("../package.json");
+function getPlatform() {
+    const type = os.type();
+    const arch = os.arch();
+    let typeDict = {
+        "Darwin": "apple-darwin",
+        "Linux": "unknown-linux-gnu",
+        "Windows_NT": "pc-windows-msvc"
+    };
+    let archDict = {
+        "x64": "x86_64",
+        "arm64": "aarch64"
+    };
+    //@ts-ignore 
+    let rust_type = typeDict[type];
+    //@ts-ignore 
+    let rust_arch = archDict[arch];
+    if (rust_type && rust_arch) {
+        return [rust_type, rust_arch];
+    }
+    throw new Error(`Unsupported platform: ${type} ${arch}`);
+}
 function AWSUrl() {
-    // const [platform, arch] = getPlatform();
-    return `https://github.com/AhaLabs/witme/releases/download/v0.2.5/witme-v0.2.5-x86_64-apple-darwin.tar.gz`;
+    const [platform, arch] = getPlatform();
+    return `https://github.com/AhaLabs/witme/releases/download/v${version}/witme-v${version}-${arch}-${platform}.tar.gz`;
 }
 exports.AWSUrl = AWSUrl;
 function getBinary(name = "witme") {
