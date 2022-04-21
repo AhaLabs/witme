@@ -1,6 +1,6 @@
 {
   "name": "witme",
-  "version": "0.2.5",
+  "version": "0.2.4",
   "description": "Tools for generating to and from wit format",
   "keywords": ["WebAssembly", "Wasm", "wit", "WasmInterfaceTypes"],
   "main": "dist/index.js",
