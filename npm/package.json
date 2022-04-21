@@ -1,15 +1,16 @@
 {
   "name": "witme",
   "version": "0.2.5",
-  "description": "CLI tool for testing NEAR smart contracts",
+  "description": "Tools for generating to and from wit format",
+  "keywords": ["WebAssembly", "Wasm", "wit", "WasmInterfaceTypes"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "license": "MIT",
+  "repository": "https://github.com/ahalabs/witme",
+  "author": "Willem Wyndham (willem@ahalabs.dev)",
   "bin": {
     "witme": "./run.js"
   },
-  "repository": "https://github.com/ahalabs/witme",
-  "author": "Willem Wyndham (willem@ahalabs.dev)",
-  "license": "MIT",
   "private": false,
   "dependencies": {
     "got": "^11.8.2",
