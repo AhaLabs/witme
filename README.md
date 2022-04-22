@@ -2,11 +2,19 @@
 
 Tools for generating to and from wit format.
 
+Option 1
+
 ```bash
 cargo install witme
 ```
 
 If generating json schemas need [nodejs](https://nodejs.org/en/) installed. One suggestion is to use [nvm](https://github.com/nvm-sh/nvm).
+
+Option 2 
+
+```bash
+npm i -g witme
+```
 
 ## Features
 
@@ -26,6 +34,8 @@ Currently there is a `near` subcommand for dealing with NEAR related transformat
   - generates ts files from a `.wit` file (defaults `index.wit` -> `./ts/*`). This builds on [wit-bindgen](https://github.com/bytecodealliance/wit-bindgen)
 - `witme near json`
   - generates a json schema for the inputs to a schema from the typescript (defaults `./ts/index.ts` --> `index.schema.json`), which uses [ts-json-schema-generator](https://github.com/vega/ts-json-schema-generator).
+- `witme near inject`
+  - writes data into a the custom section of a Wasm binary.
 
 ## Extensions
 
