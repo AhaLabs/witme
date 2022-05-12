@@ -21,7 +21,6 @@ pub fn generate_typescript(path: &Path, wit_str: &str) -> Result<()> {
     generator.generate_all(&imports, &[], &mut files);
     for (name, contents) in files.iter() {
         let dst = dir.join(name);
-        println!("Generating {:?}", dst);
         if let Some(parent) = dst.parent() {
             std::fs::create_dir_all(parent)
                 .with_context(|| format!("failed to create {:?}", parent))?;
