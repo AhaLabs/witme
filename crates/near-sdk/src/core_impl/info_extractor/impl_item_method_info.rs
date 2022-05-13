@@ -72,7 +72,7 @@ impl TryInto<syn::Item> for ImplItemMethodInfo {
             quote! {}
         } else {
             quote! {
-              /// change
+              /// @change
             }
         };
 

@@ -1,5 +1,5 @@
 use heck::*;
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::mem;
 use wit_bindgen_gen_core::wit_parser::abi::AbiVariant;
 use wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator};
@@ -10,6 +10,7 @@ pub use gen::generate_typescript;
 #[derive(Default)]
 pub struct Ts {
     src: Source,
+    imports: HashSet<String>,
     in_import: bool,
     opts: Opts,
     guest_imports: HashMap<String, Imports>,
@@ -213,7 +214,7 @@ impl Ts {
         };
         let lines = docs
             .lines()
-            .filter(|line| *line != "change" && *line != "view")
+            .filter(|line| *line != "@change" && *line != "@view")
             .collect::<Vec<&str>>();
         if !lines.is_empty() {
             self.src.ts("/**\n");
@@ -232,7 +233,7 @@ impl Ts {
             .collect();
         self.print_fields(iface, arg_fields);
     }
-
+    #[allow(dead_code)]
     fn print_args(&mut self, iface: &Interface, func: &Function, param_start: usize) {
         self.src.ts("(args");
         if func.params.is_empty() {
@@ -252,73 +253,74 @@ impl Ts {
         self.src.ts("): ");
     }
 
-    fn ts_func(&mut self, iface: &Interface, func: &Function) {
-        self.docs(&func.docs);
-        if is_change(func) {
-            self.src.ts("async ");
-        }
-        let mut name_printed = false;
-        if let FunctionKind::Static { .. } = &func.kind {
-            // static methods in imports are still wired up to an imported host
-            // object, but static methods on exports are actually static
-            // methods on the resource object.
-            if self.in_import {
-                name_printed = true;
-                self.src.ts(&func.name.to_snake_case());
-            } else {
-                self.src.ts("static ");
-            }
-        }
-        if !name_printed {
-            self.src.ts(&func.item_name().to_snake_case());
-        }
+    fn ts_func(&mut self, _iface: &Interface, _func: &Function) {
+        // TODO: Make this an option
+        // self.docs(&func.docs);
+        // if is_change(func) {
+        //     self.src.ts("async ");
+        // }
+        // let mut name_printed = false;
+        // if let FunctionKind::Static { .. } = &func.kind {
+        //     // static methods in imports are still wired up to an imported host
+        //     // object, but static methods on exports are actually static
+        //     // methods on the resource object.
+        //     if self.in_import {
+        //         name_printed = true;
+        //         self.src.ts(&func.name.to_snake_case());
+        //     } else {
+        //         self.src.ts("static ");
+        //     }
+        // }
+        // if !name_printed {
+        //     self.src.ts(&func.item_name().to_snake_case());
+        // }
 
-        let param_start = match &func.kind {
-            FunctionKind::Freestanding => 0,
-            FunctionKind::Static { .. } if self.in_import => 0,
-            FunctionKind::Static { .. } => {
-                // the 0th argument for exported static methods will be the
-                // instantiated interface
-                self.src.ts(&iface.name.to_mixed_case());
-                self.src.ts(": ");
-                self.src.ts(&iface.name.to_camel_case());
-                if !func.params.is_empty() {
-                    self.src.ts(", ");
-                }
-                0
-            }
-            // skip the first parameter on methods which is `this`
-            FunctionKind::Method { .. } => 1,
-        };
-        let name = func.item_name().to_snake_case();
+        // let param_start = match &func.kind {
+        //     FunctionKind::Freestanding => 0,
+        //     FunctionKind::Static { .. } if self.in_import => 0,
+        //     FunctionKind::Static { .. } => {
+        //         // the 0th argument for exported static methods will be the
+        //         // instantiated interface
+        //         self.src.ts(&iface.name.to_mixed_case());
+        //         self.src.ts(": ");
+        //         self.src.ts(&iface.name.to_camel_case());
+        //         if !func.params.is_empty() {
+        //             self.src.ts(", ");
+        //         }
+        //         0
+        //     }
+        //     // skip the first parameter on methods which is `this`
+        //     FunctionKind::Method { .. } => 1,
+        // };
+        // let name = func.item_name().to_snake_case();
 
-        self.print_args(iface, func, param_start);
+        // self.print_args(iface, func, param_start);
 
-        // Always async
-        self.src.ts("Promise<");
+        // // Always async
+        // self.src.ts("Promise<");
 
-        self.print_func_result(iface, func);
+        // self.print_func_result(iface, func);
 
-        self.src.ts("> {\n");
+        // self.src.ts("> {\n");
 
-        if is_change(func) {
-            self.src.ts(&format!(
-                "return providers.getTransactionLastResult(await this.{name}Raw(args, options));\n}}\n"
-            ));
-            self.docs(&func.docs);
-            self.src.ts(&format!("{name}Raw"));
-            self.print_args(iface, func, param_start);
-            self.src.ts("Promise<providers.FinalExecutionOutcome> {\n");
-            self.src.ts(&format!("return this.account.functionCall({{contractId: this.contractId, methodName: \"{name}\", args, ...options}});\n}}\n"));
-            self.docs(&func.docs);
-            self.src.ts(&format!("{name}Tx"));
-            self.print_args(iface, func, param_start);
-            self.src.ts(&format!("transactions.Action {{\n return transactions.functionCall(\"{name}\", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))\n}}\n"));
-        } else {
-            self.src.ts(&format!(
-                "return this.account.viewFunction(this.contractId, \"{name}\", args, options);\n}}\n"
-            ));
-        }
+        // if is_change(func) {
+        //     self.src.ts(&format!(
+        //         "return providers.getTransactionLastResult(await this.{name}Raw(args, options));\n}}\n"
+        //     ));
+        //     self.docs(&func.docs);
+        //     self.src.ts(&format!("{name}Raw"));
+        //     self.print_args(iface, func, param_start);
+        //     self.src.ts("Promise<providers.FinalExecutionOutcome> {\n");
+        //     self.src.ts(&format!("return this.account.functionCall({{contractId: this.contractId, methodName: \"{name}\", args, ...options}});\n}}\n"));
+        //     self.docs(&func.docs);
+        //     self.src.ts(&format!("{name}Tx"));
+        //     self.print_args(iface, func, param_start);
+        //     self.src.ts(&format!("transactions.Action {{\n return transactions.functionCall(\"{name}\", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))\n}}\n"));
+        // } else {
+        //     self.src.ts(&format!(
+        //         "return this.account.viewFunction(this.contractId, \"{name}\", args, options);\n}}\n"
+        //     ));
+        // }
     }
 
     fn print_func_result(&mut self, iface: &Interface, func: &Function) {
@@ -383,6 +385,7 @@ impl Generator for Ts {
         docs: &Docs,
     ) {
         self.docs(docs);
+        self.imports.insert(name.to_camel_case());
         if record.is_tuple() {
             self.src
                 .ts(&format!("export type {} = ", name.to_camel_case()));
@@ -435,6 +438,7 @@ impl Generator for Ts {
         docs: &Docs,
     ) {
         self.docs(docs);
+        self.imports.insert(name.to_camel_case());
         if variant.is_bool() {
             self.src.ts(&format!(
                 "export type {} = boolean;\n",
@@ -494,6 +498,7 @@ impl Generator for Ts {
         self.docs(docs);
         self.src
             .ts(&format!("export type {} = ", name.to_camel_case()));
+        self.imports.insert(name.to_camel_case());
         self.print_ty(iface, ty);
         self.src.ts(";\n");
     }
@@ -502,6 +507,7 @@ impl Generator for Ts {
         self.docs(docs);
         self.src
             .ts(&format!("export type {} = ", name.to_camel_case()));
+        self.imports.insert(name.to_camel_case());
         self.print_list(iface, ty);
         self.src.ts(";\n");
     }
@@ -607,17 +613,7 @@ impl Generator for Ts {
         }
         self.src.ts("};\n");
         if is_change_func {
-            self.src.ts("options: {
-      /** Units in gas
-       * @pattern [0-9]+
-       * @default \"30000000000000\"
-       */
-      gas?: string;
-      /** Units in yoctoNear
-       * @default \"0\"
-       */
-      attachedDeposit?: Balance;
-    }\n");
+            self.src.ts("options: CallOptions\n");
         }
         self.src.ts("\n}\n");
         self.src.ts(&format!(
@@ -661,24 +657,27 @@ impl Generator for Ts {
             }
         }
         let imports = mem::take(&mut self.src);
+        let mut main = wit_bindgen_gen_core::Source::default();
         for (_module, exports) in mem::take(&mut self.guest_exports) {
-            self.src.ts("\nexport class Contract {
-                  
-                  constructor(public account: Account, public readonly contractId: string){}\n\n");
+            // self.src.ts("\nexport class Contract {
+
+            //       constructor(public account: Account, public readonly contractId: string){}\n\n");
             for func in exports.freestanding_funcs.iter() {
                 self.src.ts(&func.ts);
             }
-            self.src.ts("}\n");
+            // self.src.ts("}\n");
             for args in exports.arg_types.iter() {
-                self.src.ts(&args.ts);
+                main.push_str(&args.ts);
             }
         }
 
         if mem::take(&mut self.needs_ty_option) {
+            self.imports.insert("Option".to_string());
             self.src
                 .ts("export type Option<T> = { tag: \"none\" } | { tag: \"some\", val; T };\n");
         }
         if mem::take(&mut self.needs_ty_result) {
+            self.imports.insert("Result".to_string());
             self.src.ts(
                 "export type Result<T, E> = { tag: \"ok\", val: T } | { tag: \"err\", val: E };\n",
             );
@@ -688,10 +687,36 @@ impl Generator for Ts {
         self.src.ts(&imports.ts);
         self.src.ts(&exports.ts);
 
+        self.src.main(&format!(
+            r#"
+import {{
+  u8,
+  i8,
+  u16,
+  i16,
+  u32,
+  i32,
+  u64,
+  i64,
+  f32,
+  f64,
+  CallOptions,
+  {},
+}} from "./types";
+
+"#,
+            self.imports
+                .iter()
+                .cloned()
+                .collect::<Vec<String>>()
+                .join(",\n\t")
+        ));
+        self.src.main(&main);
+
         let src = mem::take(&mut self.src);
         let name = iface.name.to_kebab_case();
-        files.push(&format!("{}.ts", name), src.ts.as_bytes());
-        files.push("helper.ts", HELPER.as_bytes());
+        files.push("types.ts", src.ts.as_bytes());
+        files.push(&format!("{}.ts", name), src.main.as_bytes());
     }
 
     fn finish_all(&mut self, _files: &mut Files) {
@@ -706,25 +731,8 @@ impl Ts {
             .filter(|r| r.is_tuple() && r.fields.len() == 2)
     }
     fn add_preamble(&mut self) {
-        self.src.ts("import {
-  Account,
-  transactions,
-  providers,
-  DEFAULT_FUNCTION_CALL_GAS,
-  u8,
-  i8,
-  u16,
-  i16,
-  u32,
-  i32,
-  u64,
-  i64,
-  f32,
-  f64,
-  BN,
-  ChangeMethodOptions,
-  ViewFunctionOptions,
-} from './helper';\n\n");
+        self.src.ts(HELPER);
+        self.src.ts("\n\n");
     }
 }
 
@@ -738,6 +746,7 @@ pub fn to_js_ident(name: &str) -> &str {
 
 #[derive(Default)]
 struct Source {
+    main: wit_bindgen_gen_core::Source,
     ts: wit_bindgen_gen_core::Source,
 }
 
@@ -745,11 +754,15 @@ impl Source {
     fn ts(&mut self, s: &str) {
         self.ts.push_str(s);
     }
+
+    fn main(&mut self, s: &str) {
+        self.main.push_str(s);
+    }
 }
 
 fn is_change(func: &Function) -> bool {
     if let Some(docs) = &func.docs.contents {
-        let mut x = docs.split('\n').filter(|s| *s == "change").peekable();
+        let mut x = docs.split('\n').filter(|s| *s == "@change").peekable();
         if x.peek().is_some() {
             return true;
         }
@@ -758,26 +771,6 @@ fn is_change(func: &Function) -> bool {
 }
 
 const HELPER: &str = "
-//@ts-ignore for ts-json-schema-generator
-export { Account, transactions, providers, DEFAULT_FUNCTION_CALL_GAS } from 'near-api-js';
-//@ts-ignore for ts-json-schema-generator
-import BN from 'bn.js';
-export {BN};
-
-export interface ChangeMethodOptions {
-  gas?: BN;
-  attachedDeposit?: BN;
-  walletMeta?: string;
-  walletCallbackUrl?: string;
-}
-/**
- * Options for view contract calls
- */ 
-export interface ViewFunctionOptions {
-  parse?: (response: Uint8Array) => any;
-  stringify?: (input: any) => any;
-}
-
 /** 
 * @minimum 0
 * @maximum 18446744073709551615
@@ -844,4 +837,17 @@ export type f32 = number;
 * @minimum -1.7976931348623157E+308
 * @maximum 1.7976931348623157E+308
 */
-export type f64 = number;";
+export type f64 = number;
+
+export type CallOptions = {
+  /** Units in gas
+   * @pattern [0-9]+
+   * @default \"30000000000000\"
+   */
+  gas?: string;
+  /** Units in yoctoNear
+   * @default \"0\"
+   */
+  attachedDeposit?: Balance;
+}
+";

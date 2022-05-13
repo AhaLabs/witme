@@ -11,13 +11,22 @@
       "$ref": "#/definitions/U128",
       "description": "Balance is a type for storing amounts of tokens, specified in yoctoNEAR."
     },
-    "Base64VecU8": {
-      "description": "base64 string.",
-      "type": "string"
-    },
-    "Duration": {
-      "$ref": "#/definitions/u64",
-      "description": "Raw type for duration in nanoseconds"
+    "CallOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "attachedDeposit": {
+          "$ref": "#/definitions/Balance",
+          "default": "0",
+          "description": "Units in yoctoNear"
+        },
+        "gas": {
+          "default": "30000000000000",
+          "description": "Units in gas",
+          "pattern": "[0-9]+",
+          "type": "string"
+        }
+      },
+      "type": "object"
     },
     "Fun": {
       "additionalProperties": false,
@@ -30,10 +39,6 @@
         "i"
       ],
       "type": "object"
-    },
-    "Gas": {
-      "$ref": "#/definitions/u64",
-      "description": "Represents the amount of NEAR tokens in \"gas units\" which are used to fund transactions."
     },
     "GetFun": {
       "additionalProperties": false,
@@ -81,10 +86,6 @@
         "null"
       ]
     },
-    "PublicKey": {
-      "description": "Public key in a binary format with base58 string serialization with human-readable curve. The key types currently supported are `secp256k1` and `ed25519`.\n\nEd25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.",
-      "type": "string"
-    },
     "SetStatus": {
       "additionalProperties": false,
       "contractMethod": "change",
@@ -103,21 +104,7 @@
           "type": "object"
         },
         "options": {
-          "additionalProperties": false,
-          "properties": {
-            "attachedDeposit": {
-              "$ref": "#/definitions/Balance",
-              "default": "0",
-              "description": "Units in yoctoNear"
-            },
-            "gas": {
-              "default": "30000000000000",
-              "description": "Units in gas",
-              "pattern": "[0-9]+",
-              "type": "string"
-            }
-          },
-          "type": "object"
+          "$ref": "#/definitions/CallOptions"
         }
       },
       "required": [
@@ -129,14 +116,6 @@
     "SetStatus__Result": {
       "type": "null"
     },
-    "StorageUsage": {
-      "$ref": "#/definitions/u64",
-      "description": "StorageUsage is used to count the amount of storage used by a contract."
-    },
-    "Timestamp": {
-      "$ref": "#/definitions/u64",
-      "description": "Raw type for timestamp in nanoseconds"
-    },
     "U128": {
       "description": "String representation of a u128-bit integer",
       "pattern": "^[0-9]+$",
@@ -145,11 +124,6 @@
     "i32": {
       "maximum": 2147483647,
       "minimum": -2147483648,
-      "type": "integer"
-    },
-    "u64": {
-      "maximum": 18446744073709552000,
-      "minimum": 0,
       "type": "integer"
     }
   }

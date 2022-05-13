@@ -1,119 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
-    "AccountId": {
-      "maxLength": 64,
-      "minLength": 2,
-      "pattern": "^(([a-z\\d]+[-_])*[a-z\\d]+\\.)*([a-z\\d]+[-_])*[a-z\\d]+$",
-      "type": "string"
-    },
-    "Balance": {
-      "$ref": "#/definitions/U128",
-      "description": "Balance is a type for storing amounts of tokens, specified in yoctoNEAR."
-    },
-    "Base64VecU8": {
-      "description": "base64 string.",
-      "type": "string"
-    },
-    "Color": {
-      "description": "Example of using generating an enum, e.i. a variant with unit fields",
-      "enum": [
-        "Red",
-        "Green",
-        "Blue"
-      ],
-      "type": "string"
-    },
-    "ComplicatedEnum": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/ComplicatedEnumHashFields"
-        },
-        {
-          "$ref": "#/definitions/ComplicatedEnumNumber"
-        },
-        {
-          "$ref": "#/definitions/ComplicatedEnumStringVariant"
-        }
-      ],
-      "description": "Documentation over enum"
-    },
-    "ComplicatedEnumHashFields": {
-      "additionalProperties": false,
-      "description": "Doc comment over Unit variant in enum",
-      "properties": {
-        "tag": {
-          "const": "hash-fields",
-          "type": "string"
-        },
-        "val": {
-          "$ref": "#/definitions/ComplicatedEnumHashFields"
-        }
-      },
-      "required": [
-        "tag",
-        "val"
-      ],
-      "type": "object"
-    },
-    "ComplicatedEnumNumber": {
-      "additionalProperties": false,
-      "properties": {
-        "tag": {
-          "const": "number",
-          "type": "string"
-        },
-        "val": {
-          "$ref": "#/definitions/ComplicatedEnumNumber"
-        }
-      },
-      "required": [
-        "tag",
-        "val"
-      ],
-      "type": "object"
-    },
-    "ComplicatedEnumStringVariant": {
-      "additionalProperties": false,
-      "description": "Doc comment over String variant in enum",
-      "properties": {
-        "tag": {
-          "const": "string-variant",
-          "type": "string"
-        },
-        "val": {
-          "$ref": "#/definitions/ComplicatedEnumStringVariant"
-        }
-      },
-      "required": [
-        "tag",
-        "val"
-      ],
-      "type": "object"
-    },
-    "Duration": {
-      "$ref": "#/definitions/u64",
-      "description": "Raw type for duration in nanoseconds"
-    },
-    "Gas": {
-      "$ref": "#/definitions/u64",
-      "description": "Represents the amount of NEAR tokens in \"gas units\" which are used to fund transactions."
-    },
-    "HasHashMap": {
-      "additionalProperties": false,
-      "properties": {
-        "map": {
-          "additionalProperties": {
-            "$ref": "#/definitions/TestStruct"
-          },
-          "type": "object"
-        }
-      },
-      "required": [
-        "map"
-      ],
-      "type": "object"
-    },
     "HasMutable": {
       "additionalProperties": false,
       "contractMethod": "view",
@@ -139,80 +26,7 @@
     "HasMutable__Result": {
       "type": "string"
     },
-    "InitArgs": {
-      "additionalProperties": false,
-      "properties": {
-        "metadata": {
-          "$ref": "#/definitions/NftContractMetadata"
-        },
-        "owner_id": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "owner_id",
-        "metadata"
-      ],
-      "type": "object"
-    },
-    "MyEnum": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/MyEnumUnit"
-        },
-        {
-          "$ref": "#/definitions/MyEnumTupleVariant"
-        }
-      ]
-    },
-    "MyEnumTupleVariant": {
-      "additionalProperties": false,
-      "properties": {
-        "tag": {
-          "const": "tuple-variant",
-          "type": "string"
-        },
-        "val": {
-          "items": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/definitions/i32"
-            }
-          ],
-          "maxItems": 2,
-          "minItems": 2,
-          "type": "array"
-        }
-      },
-      "required": [
-        "tag",
-        "val"
-      ],
-      "type": "object"
-    },
-    "MyEnumUnit": {
-      "additionalProperties": false,
-      "properties": {
-        "tag": {
-          "const": "unit",
-          "type": "string"
-        }
-      },
-      "required": [
-        "tag"
-      ],
-      "type": "object"
-    },
-    "NftContractMetadata": {
-      "type": "string"
-    },
-    "PublicKey": {
-      "description": "Public key in a binary format with base58 string serialization with human-readable curve. The key types currently supported are `secp256k1` and `ed25519`.\n\nEd25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.",
-      "type": "string"
-    },
-    "Result<[string,def-alias-ts_helper.ts-504-602-ts_helper.ts-0-1531793285289],string>": {
+    "Result<[string,def-alias-ts_types.ts-0-97-ts_types.ts-0-4540793285289],string>": {
       "anyOf": [
         {
           "additionalProperties": false,
@@ -259,10 +73,6 @@
           "type": "object"
         }
       ]
-    },
-    "StorageUsage": {
-      "$ref": "#/definitions/u64",
-      "description": "StorageUsage is used to count the amount of storage used by a contract."
     },
     "StringAlias": {
       "type": "string"
@@ -345,59 +155,6 @@
       "maxItems": 2,
       "minItems": 2,
       "type": "array"
-    },
-    "TestBis": {
-      "additionalProperties": false,
-      "description": "Here is a doc example to generate in wit file",
-      "properties": {
-        "btes": {
-          "additionalProperties": {
-            "type": "number"
-          },
-          "properties": {
-            "BYTES_PER_ELEMENT": {
-              "type": "number"
-            },
-            "buffer": {
-              "additionalProperties": false,
-              "properties": {
-                "byteLength": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "byteLength"
-              ],
-              "type": "object"
-            },
-            "byteLength": {
-              "type": "number"
-            },
-            "byteOffset": {
-              "type": "number"
-            },
-            "length": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "BYTES_PER_ELEMENT",
-            "buffer",
-            "byteLength",
-            "byteOffset",
-            "length"
-          ],
-          "type": "object"
-        },
-        "coucou": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "coucou",
-        "btes"
-      ],
-      "type": "object"
     },
     "TestEnum": {
       "anyOf": [
@@ -615,7 +372,7 @@
       "type": "object"
     },
     "TestResult__Result": {
-      "$ref": "#/definitions/Result%3C%5Bstring%2Cdef-alias-ts_helper.ts-504-602-ts_helper.ts-0-1531793285289%5D%2Cstring%3E"
+      "$ref": "#/definitions/Result%3C%5Bstring%2Cdef-alias-ts_types.ts-0-97-ts_types.ts-0-4540793285289%5D%2Cstring%3E"
     },
     "TestSimple": {
       "additionalProperties": false,
@@ -690,20 +447,6 @@
         "inner"
       ],
       "type": "object"
-    },
-    "TestTuple": {
-      "description": "Documentation over struct in multi-line",
-      "items": [
-        {
-          "$ref": "#/definitions/u64"
-        },
-        {
-          "type": "string"
-        }
-      ],
-      "maxItems": 2,
-      "minItems": 2,
-      "type": "array"
     },
     "TestTupleFn": {
       "additionalProperties": false,
@@ -863,15 +606,6 @@
       "minItems": 2,
       "type": "array"
     },
-    "Timestamp": {
-      "$ref": "#/definitions/u64",
-      "description": "Raw type for timestamp in nanoseconds"
-    },
-    "U128": {
-      "description": "String representation of a u128-bit integer",
-      "pattern": "^[0-9]+$",
-      "type": "string"
-    },
     "UseStringAlias": {
       "additionalProperties": false,
       "contractMethod": "view",
@@ -905,11 +639,6 @@
     "i64": {
       "maximum": 9223372036854776000,
       "minimum": -9223372036854776000,
-      "type": "integer"
-    },
-    "u32": {
-      "maximum": 4294967295,
-      "minimum": 0,
       "type": "integer"
     },
     "u64": {

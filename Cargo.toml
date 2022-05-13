@@ -6,15 +6,15 @@ keywords = ["WebAssembly", "Wasm", "wit", "WasmInterfaceTypes"]
 license = "MIT"
 name = "witme"
 repository = "https://github.com/ahalabs/witme"
-version = "0.2.6"
+version = "0.3.0"
 
 [dependencies]
 ## local
 near-sdk-witgen = {path = "./crates/near-sdk", version = "0.0.1"}
-wit-bindgen-gen-ts-near = {path = "crates/gen-ts-near", version = "0.2.2"}
+wit-bindgen-gen-ts-near = {path = "crates/gen-ts-near", version = "0.3.0"}
 
 ## wasm/wit related
-cargo-witgen = "0.12.0"
+cargo-witgen = "0.13.0"
 walrus = "0.19.0"
 
 ## Errors
