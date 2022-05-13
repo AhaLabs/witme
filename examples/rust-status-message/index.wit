@@ -6,7 +6,7 @@ record fun {
 }
 
 ///  Store a message for current signer account
-///  change
+///  @change
 set-status: function(message: string)
 ///  Retreive a message for a given account id
 get-status: function(account-id: account-id) -> option<string>

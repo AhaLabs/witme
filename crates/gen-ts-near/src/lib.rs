@@ -1,5 +1,5 @@
 use heck::*;
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::mem;
 use wit_bindgen_gen_core::wit_parser::abi::AbiVariant;
 use wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator};
@@ -10,6 +10,7 @@ pub use gen::generate_typescript;
 #[derive(Default)]
 pub struct Ts {
     src: Source,
+    imports: HashSet<String>,
     in_import: bool,
     opts: Opts,
     guest_imports: HashMap<String, Imports>,
@@ -232,7 +233,7 @@ impl Ts {
             .collect();
         self.print_fields(iface, arg_fields);
     }
-
+    #[allow(dead_code)]
     fn print_args(&mut self, iface: &Interface, func: &Function, param_start: usize) {
         self.src.ts("(args");
         if func.params.is_empty() {
@@ -252,7 +253,7 @@ impl Ts {
         self.src.ts("): ");
     }
 
-    fn ts_func(&mut self, iface: &Interface, func: &Function) {
+    fn ts_func(&mut self, _iface: &Interface, _func: &Function) {
         // TODO: Make this an option
         // self.docs(&func.docs);
         // if is_change(func) {
@@ -384,6 +385,7 @@ impl Generator for Ts {
         docs: &Docs,
     ) {
         self.docs(docs);
+        self.imports.insert(name.to_camel_case());
         if record.is_tuple() {
             self.src
                 .ts(&format!("export type {} = ", name.to_camel_case()));
@@ -436,6 +438,7 @@ impl Generator for Ts {
         docs: &Docs,
     ) {
         self.docs(docs);
+        self.imports.insert(name.to_camel_case());
         if variant.is_bool() {
             self.src.ts(&format!(
                 "export type {} = boolean;\n",
@@ -495,6 +498,7 @@ impl Generator for Ts {
         self.docs(docs);
         self.src
             .ts(&format!("export type {} = ", name.to_camel_case()));
+        self.imports.insert(name.to_camel_case());
         self.print_ty(iface, ty);
         self.src.ts(";\n");
     }
@@ -503,6 +507,7 @@ impl Generator for Ts {
         self.docs(docs);
         self.src
             .ts(&format!("export type {} = ", name.to_camel_case()));
+        self.imports.insert(name.to_camel_case());
         self.print_list(iface, ty);
         self.src.ts(";\n");
     }
@@ -662,6 +667,7 @@ impl Generator for Ts {
             }
         }
         let imports = mem::take(&mut self.src);
+        let mut main = wit_bindgen_gen_core::Source::default();
         for (_module, exports) in mem::take(&mut self.guest_exports) {
             // self.src.ts("\nexport class Contract {
 
@@ -671,15 +677,17 @@ impl Generator for Ts {
             }
             // self.src.ts("}\n");
             for args in exports.arg_types.iter() {
-                self.src.ts(&args.ts);
+                main.push_str(&args.ts);
             }
         }
 
         if mem::take(&mut self.needs_ty_option) {
+            self.imports.insert("Option".to_string());
             self.src
                 .ts("export type Option<T> = { tag: \"none\" } | { tag: \"some\", val; T };\n");
         }
         if mem::take(&mut self.needs_ty_result) {
+            self.imports.insert("Result".to_string());
             self.src.ts(
                 "export type Result<T, E> = { tag: \"ok\", val: T } | { tag: \"err\", val: E };\n",
             );
@@ -689,9 +697,35 @@ impl Generator for Ts {
         self.src.ts(&imports.ts);
         self.src.ts(&exports.ts);
 
+        self.src.main(&format!(
+            r#"
+import {{
+  u8,
+  i8,
+  u16,
+  i16,
+  u32,
+  i32,
+  u64,
+  i64,
+  f32,
+  f64,
+  {},
+}} from "./types";
+
+"#,
+            self.imports
+                .iter()
+                .cloned()
+                .collect::<Vec<String>>()
+                .join(",\n\t")
+        ));
+        self.src.main(&main);
+
         let src = mem::take(&mut self.src);
         let name = iface.name.to_kebab_case();
-        files.push(&format!("{}.ts", name), src.ts.as_bytes());
+        files.push("types.ts", src.ts.as_bytes());
+        files.push(&format!("{}.ts", name), src.main.as_bytes());
     }
 
     fn finish_all(&mut self, _files: &mut Files) {
@@ -721,12 +755,17 @@ pub fn to_js_ident(name: &str) -> &str {
 
 #[derive(Default)]
 struct Source {
+    main: wit_bindgen_gen_core::Source,
     ts: wit_bindgen_gen_core::Source,
 }
 
 impl Source {
     fn ts(&mut self, s: &str) {
         self.ts.push_str(s);
+    }
+
+    fn main(&mut self, s: &str) {
+        self.main.push_str(s);
     }
 }
 

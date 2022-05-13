@@ -1,8 +1,5 @@
+
 import {
-  Account,
-  transactions,
-  providers,
-  DEFAULT_FUNCTION_CALL_GAS,
   u8,
   i8,
   u16,
@@ -13,97 +10,18 @@ import {
   i64,
   f32,
   f64,
-  BN,
-  ChangeMethodOptions,
-  ViewFunctionOptions,
-} from './helper';
+  U128,
+  AccountId,
+  Base64VecU8,
+  StorageUsage,
+  Gas,
+  Balance,
+  Duration,
+  Timestamp,
+  PublicKey,
+  Fun,
+} from "./types";
 
-export interface Fun {
-  i: i32;
-}
-/**
-* StorageUsage is used to count the amount of storage used by a contract.
-*/
-export type StorageUsage = u64;
-/**
-* Balance is a type for storing amounts of tokens, specified in yoctoNEAR.
-*/
-export type Balance = U128;
-/**
-* Represents the amount of NEAR tokens in "gas units" which are used to fund transactions.
-*/
-export type Gas = u64;
-/**
-* base64 string.
-*/
-export type Base64VecU8 = string;
-/**
-* Raw type for duration in nanoseconds
-*/
-export type Duration = u64;
-/**
-* @minLength 2
-* @maxLength 64
-* @pattern ^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$
-*/
-export type AccountId = string;
-/**
-* String representation of a u128-bit integer
-* @pattern ^[0-9]+$
-*/
-export type U128 = string;
-/**
-* Public key in a binary format with base58 string serialization with human-readable curve.
-* The key types currently supported are `secp256k1` and `ed25519`.
-* 
-* Ed25519 public keys accepted are 32 bytes and secp256k1 keys are the uncompressed 64 format.
-*/
-export type PublicKey = string;
-/**
-* Raw type for timestamp in nanoseconds
-*/
-export type Timestamp = u64;
-
-export class Contract {
-  
-  constructor(public account: Account, public readonly contractId: string){}
-  
-  /**
-  * Store a message for current signer account
-  */
-  async set_status(args: {
-    message: string;
-  }, options?: ChangeMethodOptions): Promise<void> {
-    return providers.getTransactionLastResult(await this.set_statusRaw(args, options));
-  }
-  /**
-  * Store a message for current signer account
-  */
-  set_statusRaw(args: {
-    message: string;
-  }, options?: ChangeMethodOptions): Promise<providers.FinalExecutionOutcome> {
-    return this.account.functionCall({contractId: this.contractId, methodName: "set_status", args, ...options});
-  }
-  /**
-  * Store a message for current signer account
-  */
-  set_statusTx(args: {
-    message: string;
-  }, options?: ChangeMethodOptions): transactions.Action {
-    return transactions.functionCall("set_status", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))
-  }
-  /**
-  * Retreive a message for a given account id
-  */
-  get_status(args: {
-    account_id: AccountId;
-  }, options?: ViewFunctionOptions): Promise<string | null> {
-    return this.account.viewFunction(this.contractId, "get_status", args, options);
-  }
-  get_fun(args = {}, options?: ViewFunctionOptions): Promise<Fun> {
-    return this.account.viewFunction(this.contractId, "get_fun", args, options);
-  }
-}
 /**
 * Store a message for current signer account
 * 
