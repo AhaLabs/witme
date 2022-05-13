@@ -253,72 +253,73 @@ impl Ts {
     }
 
     fn ts_func(&mut self, iface: &Interface, func: &Function) {
-        self.docs(&func.docs);
-        if is_change(func) {
-            self.src.ts("async ");
-        }
-        let mut name_printed = false;
-        if let FunctionKind::Static { .. } = &func.kind {
-            // static methods in imports are still wired up to an imported host
-            // object, but static methods on exports are actually static
-            // methods on the resource object.
-            if self.in_import {
-                name_printed = true;
-                self.src.ts(&func.name.to_snake_case());
-            } else {
-                self.src.ts("static ");
-            }
-        }
-        if !name_printed {
-            self.src.ts(&func.item_name().to_snake_case());
-        }
+        // TODO: Make this an option
+        // self.docs(&func.docs);
+        // if is_change(func) {
+        //     self.src.ts("async ");
+        // }
+        // let mut name_printed = false;
+        // if let FunctionKind::Static { .. } = &func.kind {
+        //     // static methods in imports are still wired up to an imported host
+        //     // object, but static methods on exports are actually static
+        //     // methods on the resource object.
+        //     if self.in_import {
+        //         name_printed = true;
+        //         self.src.ts(&func.name.to_snake_case());
+        //     } else {
+        //         self.src.ts("static ");
+        //     }
+        // }
+        // if !name_printed {
+        //     self.src.ts(&func.item_name().to_snake_case());
+        // }
 
-        let param_start = match &func.kind {
-            FunctionKind::Freestanding => 0,
-            FunctionKind::Static { .. } if self.in_import => 0,
-            FunctionKind::Static { .. } => {
-                // the 0th argument for exported static methods will be the
-                // instantiated interface
-                self.src.ts(&iface.name.to_mixed_case());
-                self.src.ts(": ");
-                self.src.ts(&iface.name.to_camel_case());
-                if !func.params.is_empty() {
-                    self.src.ts(", ");
-                }
-                0
-            }
-            // skip the first parameter on methods which is `this`
-            FunctionKind::Method { .. } => 1,
-        };
-        let name = func.item_name().to_snake_case();
+        // let param_start = match &func.kind {
+        //     FunctionKind::Freestanding => 0,
+        //     FunctionKind::Static { .. } if self.in_import => 0,
+        //     FunctionKind::Static { .. } => {
+        //         // the 0th argument for exported static methods will be the
+        //         // instantiated interface
+        //         self.src.ts(&iface.name.to_mixed_case());
+        //         self.src.ts(": ");
+        //         self.src.ts(&iface.name.to_camel_case());
+        //         if !func.params.is_empty() {
+        //             self.src.ts(", ");
+        //         }
+        //         0
+        //     }
+        //     // skip the first parameter on methods which is `this`
+        //     FunctionKind::Method { .. } => 1,
+        // };
+        // let name = func.item_name().to_snake_case();
 
-        self.print_args(iface, func, param_start);
+        // self.print_args(iface, func, param_start);
 
-        // Always async
-        self.src.ts("Promise<");
+        // // Always async
+        // self.src.ts("Promise<");
 
-        self.print_func_result(iface, func);
+        // self.print_func_result(iface, func);
 
-        self.src.ts("> {\n");
+        // self.src.ts("> {\n");
 
-        if is_change(func) {
-            self.src.ts(&format!(
-                "return providers.getTransactionLastResult(await this.{name}Raw(args, options));\n}}\n"
-            ));
-            self.docs(&func.docs);
-            self.src.ts(&format!("{name}Raw"));
-            self.print_args(iface, func, param_start);
-            self.src.ts("Promise<providers.FinalExecutionOutcome> {\n");
-            self.src.ts(&format!("return this.account.functionCall({{contractId: this.contractId, methodName: \"{name}\", args, ...options}});\n}}\n"));
-            self.docs(&func.docs);
-            self.src.ts(&format!("{name}Tx"));
-            self.print_args(iface, func, param_start);
-            self.src.ts(&format!("transactions.Action {{\n return transactions.functionCall(\"{name}\", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))\n}}\n"));
-        } else {
-            self.src.ts(&format!(
-                "return this.account.viewFunction(this.contractId, \"{name}\", args, options);\n}}\n"
-            ));
-        }
+        // if is_change(func) {
+        //     self.src.ts(&format!(
+        //         "return providers.getTransactionLastResult(await this.{name}Raw(args, options));\n}}\n"
+        //     ));
+        //     self.docs(&func.docs);
+        //     self.src.ts(&format!("{name}Raw"));
+        //     self.print_args(iface, func, param_start);
+        //     self.src.ts("Promise<providers.FinalExecutionOutcome> {\n");
+        //     self.src.ts(&format!("return this.account.functionCall({{contractId: this.contractId, methodName: \"{name}\", args, ...options}});\n}}\n"));
+        //     self.docs(&func.docs);
+        //     self.src.ts(&format!("{name}Tx"));
+        //     self.print_args(iface, func, param_start);
+        //     self.src.ts(&format!("transactions.Action {{\n return transactions.functionCall(\"{name}\", args, options?.gas ?? DEFAULT_FUNCTION_CALL_GAS, options?.attachedDeposit ?? new BN(0))\n}}\n"));
+        // } else {
+        //     self.src.ts(&format!(
+        //         "return this.account.viewFunction(this.contractId, \"{name}\", args, options);\n}}\n"
+        //     ));
+        // }
     }
 
     fn print_func_result(&mut self, iface: &Interface, func: &Function) {
@@ -662,13 +663,13 @@ impl Generator for Ts {
         }
         let imports = mem::take(&mut self.src);
         for (_module, exports) in mem::take(&mut self.guest_exports) {
-            self.src.ts("\nexport class Contract {
-                  
-                  constructor(public account: Account, public readonly contractId: string){}\n\n");
+            // self.src.ts("\nexport class Contract {
+
+            //       constructor(public account: Account, public readonly contractId: string){}\n\n");
             for func in exports.freestanding_funcs.iter() {
                 self.src.ts(&func.ts);
             }
-            self.src.ts("}\n");
+            // self.src.ts("}\n");
             for args in exports.arg_types.iter() {
                 self.src.ts(&args.ts);
             }
@@ -691,7 +692,6 @@ impl Generator for Ts {
         let src = mem::take(&mut self.src);
         let name = iface.name.to_kebab_case();
         files.push(&format!("{}.ts", name), src.ts.as_bytes());
-        files.push("helper.ts", HELPER.as_bytes());
     }
 
     fn finish_all(&mut self, _files: &mut Files) {
@@ -706,25 +706,8 @@ impl Ts {
             .filter(|r| r.is_tuple() && r.fields.len() == 2)
     }
     fn add_preamble(&mut self) {
-        self.src.ts("import {
-  Account,
-  transactions,
-  providers,
-  DEFAULT_FUNCTION_CALL_GAS,
-  u8,
-  i8,
-  u16,
-  i16,
-  u32,
-  i32,
-  u64,
-  i64,
-  f32,
-  f64,
-  BN,
-  ChangeMethodOptions,
-  ViewFunctionOptions,
-} from './helper';\n\n");
+        self.src.ts(HELPER);
+        self.src.ts("\n\n");
     }
 }
 
@@ -758,26 +741,6 @@ fn is_change(func: &Function) -> bool {
 }
 
 const HELPER: &str = "
-//@ts-ignore for ts-json-schema-generator
-export { Account, transactions, providers, DEFAULT_FUNCTION_CALL_GAS } from 'near-api-js';
-//@ts-ignore for ts-json-schema-generator
-import BN from 'bn.js';
-export {BN};
-
-export interface ChangeMethodOptions {
-  gas?: BN;
-  attachedDeposit?: BN;
-  walletMeta?: string;
-  walletCallbackUrl?: string;
-}
-/**
- * Options for view contract calls
- */ 
-export interface ViewFunctionOptions {
-  parse?: (response: Uint8Array) => any;
-  stringify?: (input: any) => any;
-}
-
 /** 
 * @minimum 0
 * @maximum 18446744073709551615
