@@ -67,6 +67,19 @@ export type f32 = number;
 */
 export type f64 = number;
 
+export type CallOptions = {
+  /** Units in gas
+  * @pattern [0-9]+
+  * @default "30000000000000"
+  */
+  gas?: string;
+  /** Units in yoctoNear
+  * @default "0"
+  */
+  attachedDeposit?: Balance;
+}
+
+
 export interface Fun {
   i: i32;
 }

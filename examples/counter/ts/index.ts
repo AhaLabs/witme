@@ -10,15 +10,16 @@ import {
   i64,
   f32,
   f64,
-  Gas,
+  CallOptions,
+  Base64VecU8,
+  U128,
   PublicKey,
   StorageUsage,
-  Base64VecU8,
   Balance,
-  AccountId,
   Timestamp,
+  Gas,
   Duration,
-  U128,
+  AccountId,
 } from "./types";
 
 /**
@@ -56,17 +57,7 @@ export type GetNum__Result = i8;
 */
 export interface Increment {
   args: {};
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
+  options: CallOptions
   
 }
 export type Increment__Result = void;
@@ -81,17 +72,7 @@ export type Increment__Result = void;
 */
 export interface Decrement {
   args: {};
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
+  options: CallOptions
   
 }
 export type Decrement__Result = void;
@@ -102,17 +83,7 @@ export type Decrement__Result = void;
 */
 export interface Reset {
   args: {};
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
+  options: CallOptions
   
 }
 export type Reset__Result = void;

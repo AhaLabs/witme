@@ -26,7 +26,7 @@
     "HasMutable__Result": {
       "type": "string"
     },
-    "Result<[string,def-alias-ts_types.ts-0-97-ts_types.ts-0-4342793285289],string>": {
+    "Result<[string,def-alias-ts_types.ts-0-97-ts_types.ts-0-4540793285289],string>": {
       "anyOf": [
         {
           "additionalProperties": false,
@@ -372,7 +372,7 @@
       "type": "object"
     },
     "TestResult__Result": {
-      "$ref": "#/definitions/Result%3C%5Bstring%2Cdef-alias-ts_types.ts-0-97-ts_types.ts-0-4342793285289%5D%2Cstring%3E"
+      "$ref": "#/definitions/Result%3C%5Bstring%2Cdef-alias-ts_types.ts-0-97-ts_types.ts-0-4540793285289%5D%2Cstring%3E"
     },
     "TestSimple": {
       "additionalProperties": false,

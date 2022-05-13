@@ -10,16 +10,17 @@ import {
   i64,
   f32,
   f64,
-  U128,
-  AccountId,
-  Base64VecU8,
-  StorageUsage,
-  Gas,
+  CallOptions,
   Balance,
-  Duration,
   Timestamp,
   PublicKey,
+  AccountId,
+  Duration,
+  Gas,
   Fun,
+  StorageUsage,
+  Base64VecU8,
+  U128,
 } from "./types";
 
 /**
@@ -31,17 +32,7 @@ export interface SetStatus {
   args: {
     message: string;
   };
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
+  options: CallOptions
   
 }
 export type SetStatus__Result = void;

@@ -5,6 +5,23 @@
       "$ref": "#/definitions/U128",
       "description": "Balance is a type for storing amounts of tokens, specified in yoctoNEAR."
     },
+    "CallOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "attachedDeposit": {
+          "$ref": "#/definitions/Balance",
+          "default": "0",
+          "description": "Units in yoctoNear"
+        },
+        "gas": {
+          "default": "30000000000000",
+          "description": "Units in gas",
+          "pattern": "[0-9]+",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "GetMessage": {
       "additionalProperties": false,
       "contractMethod": "view",
@@ -56,21 +73,7 @@
           "type": "object"
         },
         "options": {
-          "additionalProperties": false,
-          "properties": {
-            "attachedDeposit": {
-              "$ref": "#/definitions/Balance",
-              "default": "0",
-              "description": "Units in yoctoNear"
-            },
-            "gas": {
-              "default": "30000000000000",
-              "description": "Units in gas",
-              "pattern": "[0-9]+",
-              "type": "string"
-            }
-          },
-          "type": "object"
+          "$ref": "#/definitions/CallOptions"
         }
       },
       "required": [

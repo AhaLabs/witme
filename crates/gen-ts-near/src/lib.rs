@@ -613,17 +613,7 @@ impl Generator for Ts {
         }
         self.src.ts("};\n");
         if is_change_func {
-            self.src.ts("options: {
-      /** Units in gas
-       * @pattern [0-9]+
-       * @default \"30000000000000\"
-       */
-      gas?: string;
-      /** Units in yoctoNear
-       * @default \"0\"
-       */
-      attachedDeposit?: Balance;
-    }\n");
+            self.src.ts("options: CallOptions\n");
         }
         self.src.ts("\n}\n");
         self.src.ts(&format!(
@@ -710,6 +700,7 @@ import {{
   i64,
   f32,
   f64,
+  CallOptions,
   {},
 }} from "./types";
 
@@ -846,4 +837,17 @@ export type f32 = number;
 * @minimum -1.7976931348623157E+308
 * @maximum 1.7976931348623157E+308
 */
-export type f64 = number;";
+export type f64 = number;
+
+export type CallOptions = {
+  /** Units in gas
+   * @pattern [0-9]+
+   * @default \"30000000000000\"
+   */
+  gas?: string;
+  /** Units in yoctoNear
+   * @default \"0\"
+   */
+  attachedDeposit?: Balance;
+}
+";

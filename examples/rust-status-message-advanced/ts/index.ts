@@ -10,16 +10,17 @@ import {
   i64,
   f32,
   f64,
-  AccountId,
-  StorageUsage,
-  Gas,
-  Base64VecU8,
-  Duration,
-  Message,
-  Balance,
-  Timestamp,
+  CallOptions,
   U128,
   PublicKey,
+  Base64VecU8,
+  StorageUsage,
+  Message,
+  Balance,
+  AccountId,
+  Gas,
+  Duration,
+  Timestamp,
 } from "./types";
 
 /**
@@ -41,17 +42,7 @@ export interface SetMessage {
   args: {
     message: Message;
   };
-  options: {
-    /** Units in gas
-    * @pattern [0-9]+
-    * @default "30000000000000"
-    */
-    gas?: string;
-    /** Units in yoctoNear
-    * @default "0"
-    */
-    attachedDeposit?: Balance;
-  }
+  options: CallOptions
   
 }
 export type SetMessage__Result = void;
