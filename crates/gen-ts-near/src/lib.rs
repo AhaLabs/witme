@@ -213,7 +213,7 @@ impl Ts {
         };
         let lines = docs
             .lines()
-            .filter(|line| *line != "change" && *line != "view")
+            .filter(|line| *line != "@change" && *line != "@view")
             .collect::<Vec<&str>>();
         if !lines.is_empty() {
             self.src.ts("/**\n");
@@ -732,7 +732,7 @@ impl Source {
 
 fn is_change(func: &Function) -> bool {
     if let Some(docs) = &func.docs.contents {
-        let mut x = docs.split('\n').filter(|s| *s == "change").peekable();
+        let mut x = docs.split('\n').filter(|s| *s == "@change").peekable();
         if x.peek().is_some() {
             return true;
         }
