@@ -989,7 +989,7 @@ dependencies = [
 
 [[package]]
 name = "near-sdk-witgen"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "anyhow",
  "near-contract-standards",
@@ -2031,7 +2031,7 @@ dependencies = [
 
 [[package]]
 name = "witme"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "aha-wit-parser",
  "anyhow",
