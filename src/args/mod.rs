@@ -9,5 +9,5 @@ pub use ts::*;
 pub use wit::*;
 
 pub trait Runnable {
-  fn run(self) -> anyhow::Result<()>;
+    fn run(self) -> anyhow::Result<()>;
 }

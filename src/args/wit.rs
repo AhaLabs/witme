@@ -1,8 +1,8 @@
 use anyhow::Result;
 use cargo_witgen::Witgen;
 use near_sdk_witgen::ImplVisitor;
-use wit_bindgen_gen_ts_near::generate_typescript;
 use std::path::PathBuf;
+use wit_bindgen_gen_ts_near::generate_typescript;
 
 use crate::embeded;
 
@@ -25,8 +25,6 @@ pub struct Wit {
     #[clap(flatten)]
     witgen: Witgen,
 }
-
-
 
 impl Runnable for Wit {
     fn run(self) -> Result<()> {
