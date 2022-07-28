@@ -121,7 +121,7 @@ impl ImplVisitor {
     }
 
     pub fn find_items_in_file(ast: &syn::File) -> Vec<syn::Item> {
-        let mut visitor = ImplVisitor {
+        let mut visitor = Self {
             functions: Vec::new(),
         };
         visitor.visit_file(ast);
