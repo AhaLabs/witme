@@ -14,7 +14,7 @@ version = "0.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ae96d25ebc6222c0010eaf18aac77eb6b9ac67a58e19d9cd32f2e1d9d67fbbe"
 dependencies = [
- "aha-wit-parser",
+ "aha-wit-parser 0.0.2",
  "anyhow",
 ]
 
@@ -23,6 +23,19 @@ name = "aha-wit-parser"
 version = "0.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fca135160a5b98ceabe33b3c929ac3dea22bac8a5e4de29942536d80eb2b4c53"
+dependencies = [
+ "anyhow",
+ "id-arena",
+ "pulldown-cmark",
+ "unicode-normalization",
+ "unicode-xid",
+]
+
+[[package]]
+name = "aha-wit-parser"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf6e535ab8eaace2f1a5faa0dcdf14f1d640b005e2921defd010699bf33bf1f1"
 dependencies = [
  "anyhow",
  "id-arena",
@@ -53,9 +66,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.56"
+version = "1.0.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4361135be9122e0870de935d7c439aef945b9f9ddd4199a553b5270b49c82a27"
+checksum = "bb07d2053ccdbe10e2af2995a2f116c1330396493dc1269f6a91d0ae82e19704"
 
 [[package]]
 name = "arrayref"
@@ -296,16 +309,17 @@ dependencies = [
 
 [[package]]
 name = "cargo-witgen"
-version = "0.13.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "294b3421e160f79c23837ce6d0737c5898d77e9f40ae03abda2fb2b58f64672c"
+checksum = "99023f0a09b4fcb68c747acec4b3f6e445abecd761b249a3d1029e80903dfb03"
 dependencies = [
  "anyhow",
- "cargo_metadata",
- "clap 3.1.8",
- "clap_derive",
+ "clap 3.2.2",
+ "clap-cargo-extra",
+ "heck 0.4.0",
+ "regex",
  "syn",
- "witgen_macro_helper 0.13.0",
+ "witgen_macro_helper 0.15.0",
 ]
 
 [[package]]
@@ -313,6 +327,19 @@ name = "cargo_metadata"
 version = "0.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4acbb09d9ee8e23699b9634375c72795d095bf268439da88562cf9b501f181fa"
+dependencies = [
+ "camino",
+ "cargo-platform",
+ "semver",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "cargo_metadata"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3abb7553d5b9b8421c6de7cb02606ff15e0c6eea7d8eadd75ef013fd636bec36"
 dependencies = [
  "camino",
  "cargo-platform",
@@ -375,32 +402,65 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "3.1.8"
+version = "3.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71c47df61d9e16dc010b55dba1952a57d8c215dbb533fd13cdd13369aac73b1c"
+checksum = "8e538f9ee5aa3b3963f09a997035f883677966ed50fce0292611927ce6f6d8c6"
 dependencies = [
  "atty",
  "bitflags",
  "clap_derive",
+ "clap_lex",
  "indexmap",
  "lazy_static",
- "os_str_bytes",
  "strsim",
  "termcolor",
  "textwrap 0.15.0",
 ]
 
 [[package]]
-name = "clap_derive"
-version = "3.1.7"
+name = "clap-cargo"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3aab4734e083b809aaf5794e14e756d1c798d2c69c7f7de7a09a2f5214993c1"
+checksum = "841b17c26cdae63b80cd9014f4fb779b761c388908bdf58e15223a08d65e9b08"
+dependencies = [
+ "cargo_metadata 0.15.0",
+ "clap 3.2.2",
+ "doc-comment",
+]
+
+[[package]]
+name = "clap-cargo-extra"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "78372b8230d3ed2f84c58e472d3a540ed75df57ec0a94c68b29d05d82796fa55"
+dependencies = [
+ "anyhow",
+ "cargo_metadata 0.15.0",
+ "clap 3.2.2",
+ "clap-cargo",
+ "heck 0.4.0",
+]
+
+[[package]]
+name = "clap_derive"
+version = "3.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7f98063cac4652f23ccda556b8d04347a7fc4b2cff1f7577cc8c6546e0d8078"
 dependencies = [
  "heck 0.4.0",
  "proc-macro-error",
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "clap_lex"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2850f2f5a82cbf437dd5af4d49848fbdfc27c157c3d010345776f952765261c5"
+dependencies = [
+ "os_str_bytes",
 ]
 
 [[package]]
@@ -1104,9 +1164,6 @@ name = "os_str_bytes"
 version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8e22443d1643a904602595ba1cd8f7d896afe56d26712531c5ff73a15b2fbf64"
-dependencies = [
- "memchr",
-]
 
 [[package]]
 name = "parity-scale-codec"
@@ -1377,9 +1434,9 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.5.5"
+version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a11647b6b25ff05a515cb92c365cec08801e83423a235b51e231e1808747286"
+checksum = "4c4eb3267174b8c6c2f654116623910a0fef09c4753f8dd83db29c48a0df988b"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -1394,9 +1451,9 @@ checksum = "6c230d73fb8d8c1b9c0b3135c5142a8acee3a0558fb8db5cf1cb65f8d7862132"
 
 [[package]]
 name = "regex-syntax"
-version = "0.6.25"
+version = "0.6.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
+checksum = "a3f87b73ce11b1619a3c6332f45341e0047173771e8b8b73f87bfeefb7b56244"
 
 [[package]]
 name = "remove_dir_all"
@@ -1623,13 +1680,14 @@ dependencies = [
 
 [[package]]
 name = "syn-file-expand"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bcf0498cadc601521d8125a201aa487616aa668cb8adefb936c7aa0dce8ba84f"
+checksum = "b6181cbea559711c240607c08763542d871f1b8988dd48e4c713e1c674642c63"
 dependencies = [
  "im-rc",
  "itertools",
  "proc-macro2",
+ "quote",
  "syn",
  "thiserror",
 ]
@@ -2005,7 +2063,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da7073d93878632e47f9f56dbd41531c66180ad77439f8f32727c03d830c462"
 dependencies = [
  "anyhow",
- "cargo_metadata",
+ "cargo_metadata 0.14.2",
  "heck 0.4.0",
  "hex",
  "once_cell",
@@ -2017,10 +2075,11 @@ dependencies = [
 
 [[package]]
 name = "witgen_macro_helper"
-version = "0.13.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "728771ba81a0ef7d394b56516bf1b0615470946104ac3e7a6500b4da46b64126"
+checksum = "7e1ac9606b47bc18899885e2ae1fcd8616a97dcbea499d0f9be359d11c5fe344"
 dependencies = [
+ "aha-wit-parser 0.2.0",
  "anyhow",
  "heck 0.4.0",
  "proc-macro2",
@@ -2033,12 +2092,12 @@ dependencies = [
 name = "witme"
 version = "0.3.1"
 dependencies = [
- "aha-wit-parser",
+ "aha-wit-parser 0.0.2",
  "anyhow",
  "assert_cmd",
  "assert_fs",
  "cargo-witgen",
- "clap 3.1.8",
+ "clap 3.2.2",
  "near-sdk-witgen",
  "predicates",
  "walrus",

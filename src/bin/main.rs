@@ -1,13 +1,11 @@
 // #![deny(warnings)]
-#![doc = include_str!("../README.md")]
+#![doc = include_str!("../../README.md")]
 use std::env;
 
 use anyhow::{Context, Result};
 use clap::{crate_version, FromArgMatches, IntoApp};
 
-mod app;
-mod embeded;
-use crate::app::WitMe;
+use witme::app::WitMe;
 
 fn main() -> Result<()> {
     let args = env::args_os();

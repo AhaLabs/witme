@@ -14,14 +14,14 @@ near-sdk-witgen = {path = "./crates/near-sdk", version = "0.0.2"}
 wit-bindgen-gen-ts-near = {path = "crates/gen-ts-near", version = "0.3.0"}
 
 ## wasm/wit related
-cargo-witgen = "0.13.0"
+cargo-witgen = "0.15.0"
 walrus = "0.19.0"
 
 ## Errors
 anyhow = "1.0.51"
 
 ## CLI
-clap = {version = "=3.1.8", features = ["derive", "cargo"]}
+clap = {version = "=3.2", features = ["derive", "cargo"]}
 
 [dev-dependencies]
 assert_cmd = "2.0.4"
@@ -38,4 +38,4 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "witme"
-path = "src/main.rs"
+path = "src/bin/main.rs"
