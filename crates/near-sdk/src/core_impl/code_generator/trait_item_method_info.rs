@@ -11,7 +11,7 @@ impl TraitItemMethodInfo {
         let ident = &self.attr_sig_info.ident;
         let ident_byte_str = &self.ident_byte_str;
         let pat_type_list = self.attr_sig_info.pat_type_list();
-        let serialize = TraitItemMethodInfo::generate_serialier(
+        let serialize = Self::generate_serialier(
             &self.attr_sig_info,
             &self.attr_sig_info.result_serializer,
         );

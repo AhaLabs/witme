@@ -101,7 +101,7 @@ enum ComplicatedEnum {
 }
 
 #[witgen]
-fn test_tuple_fn(other: Vec<u8>, test_struct: TestStruct, other_enum: TestEnum) -> (String, i64) {
+fn test_tuple_fn(other: &[u8], test_struct: TestStruct, other_enum: &TestEnum) -> (String, i64) {
     (String::from("test"), 0i64)
 }
 
@@ -117,6 +117,6 @@ fn use_string_alias(s: StringAlias) -> StringAlias {
 
 #[witgen]
 fn has_mutable(mut s: String) -> String {
-    s = s + &"hello".to_string();
+    s += "hello";
     s
 }

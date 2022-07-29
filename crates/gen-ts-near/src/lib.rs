@@ -57,11 +57,11 @@ impl Opts {
 }
 
 impl Ts {
-    pub fn new() -> Ts {
-        Ts::default()
+    pub fn new() -> Self {
+        Self::default()
     }
 
-    fn abi_variant(dir: Direction) -> AbiVariant {
+    const fn abi_variant(dir: Direction) -> AbiVariant {
         match dir {
             Direction::Import => AbiVariant::GuestExport,
             Direction::Export => AbiVariant::GuestImport,

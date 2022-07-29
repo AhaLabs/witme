@@ -36,5 +36,6 @@ impl StatusMessage {
 #[near_sdk::witgen]
 #[derive(Default)]
 pub struct Fun {
+    #[allow(dead_code)]
     i: i32,
 }
