@@ -26,7 +26,7 @@ pub enum NearCommand {
 
     /// Generate ts from wit
     Ts(Ts),
-    /// Generate a json schema from ts
+    /// Generate a json schema from wit
     Json(Json),
 
     /// Inject wit reference into wasm binary. If no data or file argument is provided

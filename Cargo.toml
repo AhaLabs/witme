@@ -12,6 +12,7 @@ version = "0.3.1"
 ## local
 near-sdk-witgen = {path = "./crates/near-sdk", version = "0.0.2"}
 wit-bindgen-gen-ts-near = {path = "crates/gen-ts-near", version = "0.3.0"}
+wit-bindgen-gen-json-schema = { git = "https://github.com/ahalabs/wit-bindgen", branch = "feat/json-schema"}
 
 ## wasm/wit related
 cargo-witgen = "0.15.0"

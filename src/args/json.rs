@@ -1,7 +1,6 @@
-use std::{
-    path::PathBuf,
-    process::{Command, Stdio},
-};
+use anyhow::Context;
+use std::{fs, path::PathBuf};
+use wit_bindgen_gen_json_schema::gen::generate_json;
 
 use super::Runnable;
 
@@ -24,27 +23,9 @@ pub struct Json {
 
 impl Runnable for Json {
     fn run(self) -> anyhow::Result<()> {
-        let Self {
-            input,
-            out_dir,
-            args,
-        } = self;
-        Command::new("npx")
-            .arg("ts-json-schema-generator")
-            .arg("-p")
-            .arg(input)
-            .arg("--validation-keywords")
-            .arg("contractMethod")
-            .arg("--validation-keywords")
-            .arg("allow")
-            .arg("--no-type-check")
-            .arg("-o")
-            .arg(out_dir.join("index.schema.json"))
-            .args(args)
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .output()
-            .expect("failed to execute process");
-        Ok(())
+        let Self { input, out_dir, .. } = self;
+        let content =
+            String::from_utf8(fs::read(&input).context(format!("Error with file {:#?}", input))?)?;
+        generate_json(&out_dir, &content)
     }
 }
