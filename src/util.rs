@@ -20,7 +20,7 @@ pub fn write_stdout(buf: &[u8]) -> Result<()> {
   std::io::stdout().lock().write_all(buf).context("cannot to stdout")
 }
 
-pub fn write_file_or_stdout(path: &Option<&Path>, contents: &[u8]) -> Result<()> {
+pub fn write_file_or_stdout(path: Option<&Path>, contents: &[u8]) -> Result<()> {
     if let Some(path) = path {
         write_file(path, contents)
     } else {
@@ -87,7 +87,7 @@ impl TryInto<Module> for &Wasm {
         match self {
             Wasm::File(path) => Module::from_file(path),
             Wasm::Data(data) => Module::from_buffer(&data),
-            Wasm::Mod(_) => bail!("already have module"),
+            Wasm::Mod(_) => bail!("already contains module"),
         }
     }
 }

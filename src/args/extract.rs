@@ -37,7 +37,7 @@ impl Runnable for Extract {
         if decompress {
           data = data.decompress()?;
         }
-        write_file_or_stdout(&output.as_deref(), &data)
+        write_file_or_stdout(output.as_deref(), &data)
     }
 }
 

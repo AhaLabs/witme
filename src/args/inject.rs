@@ -46,7 +46,7 @@ impl Runnable for Inject {
             data = data.compress()?;
         }
         let wasm = Wasm::new(input)?.inject_custom_section(name, data)?;
-        write_file_or_stdout(&output.as_deref(), &wasm.emit()?)
+        write_file_or_stdout(output.as_deref(), &wasm.emit()?)
     }
 }
 
