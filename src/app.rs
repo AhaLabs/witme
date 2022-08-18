@@ -1,7 +1,8 @@
 use anyhow::Result;
 use clap::Parser;
+use cargo_witgen::Witgen;
 
-use crate::args::{Inject, Json, Runnable, Ts, Wit};
+use crate::args::{Extract, Inject, Json, Runnable, Ts, Wit};
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -17,6 +18,16 @@ pub enum TopLevelCommand {
     /// NEAR specific wit transformations
     #[clap(subcommand)]
     Near(NearCommand),
+    
+    /// Inject data into wasm custom section
+    Inject(Inject),
+    
+    /// Extract data from wasm custom section
+    Extract(Extract),
+
+    /// Generate Wit from source code (currently only rust)
+    #[clap(alias = "gen")]
+    Generate(Witgen)
 }
 
 #[derive(Parser, Debug)]
@@ -26,18 +37,19 @@ pub enum NearCommand {
 
     /// Generate ts from wit
     Ts(Ts),
+
     /// Generate a json schema from wit
     Json(Json),
 
-    /// Inject wit reference into wasm binary. If no data or file argument is provided
-    /// stdin is used
-    Inject(Inject),
 }
 
 impl WitMe {
     pub fn run(self) -> Result<()> {
         match self.top_level_command {
             TopLevelCommand::Near(command) => command.run(),
+            TopLevelCommand::Inject(inject) => inject.run(),
+            TopLevelCommand::Extract(extract) => extract.run(),
+            TopLevelCommand::Generate(witgen) => witgen.run(),
         }
     }
 }
@@ -48,7 +60,6 @@ impl NearCommand {
             NearCommand::Ts(ts) => ts.run(),
             NearCommand::Wit(wit) => wit.run(),
             NearCommand::Json(json) => json.run(),
-            NearCommand::Inject(inject) => inject.run(),
         }
     }
 }

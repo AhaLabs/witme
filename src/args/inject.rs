@@ -1,21 +1,18 @@
+use crate::util::{read_stdin, write_file_or_stdout, Compressable, Wasm};
+
 use super::Runnable;
 use anyhow::{bail, Result};
-use std::{
-    fs,
-    io::Read,
-    path::{Path, PathBuf},
-};
-use walrus::{Module, RawCustomSection};
+use std::{fs, path::PathBuf};
 
 #[derive(Debug, clap::Args)]
 pub struct Inject {
-    /// Input file of binary to transform
+    /// Input file of binary to transform. Stdin is used if nothing is passed.
     #[clap(long, short = 'i', action)]
-    input: PathBuf,
+    input: Option<PathBuf>,
 
-    /// Output file for transformed binary
+    /// Output file for transformed binary. Stdout is used if none is provided
     #[clap(long, short = 'o', action)]
-    output: PathBuf,
+    output: Option<PathBuf>,
 
     /// Data to write to custom section
     #[clap(long, short = 'd', action)]
@@ -28,6 +25,10 @@ pub struct Inject {
     /// Name of custom section
     #[clap(long, short = 'n', default_value = "json", action)]
     name: String,
+
+    /// Compress data using brotli compression
+    #[clap(long, short = 'c', action)]
+    compress: bool,
 }
 
 impl Runnable for Inject {
@@ -38,8 +39,14 @@ impl Runnable for Inject {
             data,
             file,
             name,
+            compress,
         } = self;
-        inject_wit(&input, &output, name, get_data(data, file)?)
+        let mut data = get_data(data, file)?;
+        if compress {
+            data = data.compress()?;
+        }
+        let wasm = Wasm::new(input)?.inject_custom_section(name, data)?;
+        write_file_or_stdout(&output.as_deref(), &wasm.emit()?)
     }
 }
 
@@ -50,20 +57,4 @@ fn get_data(data: Option<String>, file: Option<PathBuf>) -> Result<Vec<u8>> {
         (None, None) => read_stdin(),
         _ => bail!("Cannot use both 'data' and 'file' arguments"),
     }
-}
-
-fn read_stdin() -> Result<Vec<u8>> {
-    let mut buf = vec![];
-    std::io::stdin()
-        .lock()
-        .read_to_end(&mut buf)
-        .map_err(anyhow::Error::from)?;
-    Ok(buf)
-}
-
-/// Inject data into a custom section
-pub fn inject_wit(input: &Path, output: &Path, name: String, data: Vec<u8>) -> Result<()> {
-    let mut module = Module::from_file(input)?;
-    module.customs.add(RawCustomSection { name, data });
-    module.emit_wasm_file(output)
 }
