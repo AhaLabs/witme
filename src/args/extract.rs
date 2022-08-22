@@ -1,10 +1,7 @@
-use crate::util::{write_file_or_stdout, Wasm, Compressable};
+use crate::util::{write_file_or_stdout, Compressable, Wasm};
 
 use super::Runnable;
-use std::{
-    path::{ PathBuf},
-};
-
+use std::path::PathBuf;
 
 #[derive(Debug, clap::Args)]
 pub struct Extract {
@@ -35,11 +32,8 @@ impl Runnable for Extract {
         } = self;
         let mut data = Wasm::new(input)?.extract_custom_section(&name)?;
         if decompress {
-          data = data.decompress()?;
+            data = data.decompress()?;
         }
         write_file_or_stdout(output.as_deref(), &data)
     }
 }
-
-
-

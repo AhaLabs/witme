@@ -1,9 +1,10 @@
-use anyhow::{Context, Result, bail};
+use anyhow::{bail, Context, Result};
 use brotli::BrotliDecompress;
 use std::{
     fs::OpenOptions,
     io::{Read, Write},
-    path::{Path, PathBuf}, ops::DerefMut,
+    ops::DerefMut,
+    path::{Path, PathBuf},
 };
 use walrus::{Module, RawCustomSection};
 
@@ -60,28 +61,28 @@ impl Wasm {
     }
 
     pub fn extract_custom_section(&self, name: &str) -> Result<Vec<u8>> {
-      let module: Module = self.try_into()?;
-      for section in module.customs.iter() {
-        let section = section.1;
-        if section.name() == name {
-            return Ok(section.data(&Default::default()).to_vec());
+        let module: Module = self.try_into()?;
+        for section in module.customs.iter() {
+            let section = section.1;
+            if section.name() == name {
+                return Ok(section.data(&Default::default()).to_vec());
+            }
         }
-    }
-    bail!("No custom section: {}", name)
+        bail!("No custom section: {}", name)
     }
 
     pub fn inject_custom_section(&self, name: String, data: Vec<u8>) -> Result<Self> {
-      let mut module: Module = self.try_into()?;
-      module.customs.add(RawCustomSection { name, data });
-      Ok(Wasm::Mod(module))
+        let mut module: Module = self.try_into()?;
+        module.customs.add(RawCustomSection { name, data });
+        Ok(Wasm::Mod(module))
     }
 
-    pub fn emit(self) -> Result<Vec<u8>> { 
-      match self {
-        Wasm::Data(bytes) => Ok(bytes),
-        Wasm::Mod(mut module) => Ok(module.emit_wasm()),
-        Wasm::File(_) => bail!("cannot emit file"),
-    }
+    pub fn emit(self) -> Result<Vec<u8>> {
+        match self {
+            Wasm::Data(bytes) => Ok(bytes),
+            Wasm::Mod(mut module) => Ok(module.emit_wasm()),
+            Wasm::File(_) => bail!("cannot emit file"),
+        }
     }
 }
 

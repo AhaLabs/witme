@@ -1,6 +1,6 @@
 use anyhow::Result;
-use clap::Parser;
 use cargo_witgen::Witgen;
+use clap::Parser;
 
 use crate::args::{Extract, Inject, Json, Runnable, Ts, Wit};
 
@@ -18,16 +18,16 @@ pub enum TopLevelCommand {
     /// NEAR specific wit transformations
     #[clap(subcommand)]
     Near(NearCommand),
-    
+
     /// Inject data into wasm custom section
     Inject(Inject),
-    
+
     /// Extract data from wasm custom section
     Extract(Extract),
 
     /// Generate Wit from source code (currently only rust)
     #[clap(alias = "gen")]
-    Generate(Witgen)
+    Generate(Witgen),
 }
 
 #[derive(Parser, Debug)]
@@ -40,7 +40,6 @@ pub enum NearCommand {
 
     /// Generate a json schema from wit
     Json(Json),
-
 }
 
 impl WitMe {
