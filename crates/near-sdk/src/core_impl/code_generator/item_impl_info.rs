@@ -18,7 +18,7 @@ impl ItemImplInfo {
         use quote::{format_ident, quote, ToTokens};
         let orig_name = self.ty.clone().into_token_stream();
         let mut name = quote! {Contract};
-        if let Ok(input) = syn::parse::<Ident>(orig_name.into()) {
+        if let Ok(input) = syn::parse2::<Ident>(orig_name) {
             let new_name = format_ident!("{}Contract", input);
             name = quote! {#new_name};
         };
