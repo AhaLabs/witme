@@ -17,7 +17,10 @@ pub fn read_stdin() -> Result<Vec<u8>> {
 }
 
 pub fn write_stdout(buf: &[u8]) -> Result<()> {
-  std::io::stdout().lock().write_all(buf).context("cannot to stdout")
+    std::io::stdout()
+        .lock()
+        .write_all(buf)
+        .context("cannot write to stdout")
 }
 
 pub fn write_file_or_stdout(path: Option<&Path>, contents: &[u8]) -> Result<()> {
@@ -34,9 +37,11 @@ pub fn write_file(path: &Path, contents: &[u8]) -> Result<()> {
         .truncate(true)
         .create(true)
         .open(path)
-        .expect("cannot create file to generate wit");
-    file.write_all(contents).context("cannot write to file")?;
-    file.flush().context("cannot flush file")?;
+        .with_context(|| format!("cannot open {}", path.display()))?;
+    file.write_all(contents)
+        .with_context(|| format!("cannot write to file: {}", path.display()))?;
+    file.flush()
+        .with_context(|| format!("cannot flush file: {}", path.display()))?;
     Ok(())
 }
 
@@ -85,39 +90,38 @@ impl TryInto<Module> for &Wasm {
 
     fn try_into(self) -> Result<Module, Self::Error> {
         match self {
-            Wasm::File(path) => Module::from_file(path),
+            Wasm::File(path) => Module::from_file(path)
+                .with_context(|| format!("Error reading wasm file: {}", path.display())),
             Wasm::Data(data) => Module::from_buffer(&data),
             Wasm::Mod(_) => bail!("already contains module"),
         }
     }
 }
 
-
 pub trait Compressable {
-  fn compress(&mut self) -> Result<Vec<u8>>;
-  fn decompress(&self) -> Result<Vec<u8>>;
+    fn compress(&mut self) -> Result<Vec<u8>>;
+    fn decompress(&self) -> Result<Vec<u8>>;
 }
 
 impl Compressable for Vec<u8> {
     fn decompress(&self) -> Result<Vec<u8>> {
-      let mut result = Vec::new();
-      BrotliDecompress(&mut self.as_slice(), &mut result)?;
-      Ok(result)
+        let mut result = Vec::new();
+        BrotliDecompress(&mut self.as_slice(), &mut result)?;
+        Ok(result)
     }
 
     fn compress(&mut self) -> Result<Vec<u8>> {
-      compress_data(self.deref_mut())
+        compress_data(self.deref_mut())
     }
 }
 
-
 pub fn compress_data(data: &mut [u8]) -> Result<Vec<u8>> {
-  let mut out = Vec::<u8>::new();
-  let params = brotli::enc::BrotliEncoderParams {
-      quality: 11,
-      ..Default::default()
-  };
+    let mut out = Vec::<u8>::new();
+    let params = brotli::enc::BrotliEncoderParams {
+        quality: 11,
+        ..Default::default()
+    };
 
-  brotli::BrotliCompress(&mut data.as_ref(), &mut out, &params)?;
-  Ok(out)
+    brotli::BrotliCompress(&mut data.as_ref(), &mut out, &params)?;
+    Ok(out)
 }
