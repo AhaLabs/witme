@@ -49,7 +49,7 @@ pub fn write_file(path: &Path, contents: &[u8]) -> Result<()> {
 pub enum Wasm {
     File(PathBuf),
     Data(Vec<u8>),
-    Mod(Module),
+    Mod(Box<Module>),
 }
 
 impl Wasm {
@@ -60,7 +60,7 @@ impl Wasm {
         })
     }
 
-    pub fn extract_custom_section(&self, name: &str) -> Result<Vec<u8>> {
+    pub fn extract_custom_section(self, name: &str) -> Result<Vec<u8>> {
         let module: Module = self.try_into()?;
         for section in module.customs.iter() {
             let section = section.1;
@@ -71,10 +71,10 @@ impl Wasm {
         bail!("No custom section: {}", name)
     }
 
-    pub fn inject_custom_section(&self, name: String, data: Vec<u8>) -> Result<Self> {
+    pub fn inject_custom_section(self, name: String, data: Vec<u8>) -> Result<Self> {
         let mut module: Module = self.try_into()?;
         module.customs.add(RawCustomSection { name, data });
-        Ok(Wasm::Mod(module))
+        Ok(Wasm::Mod(Box::new(module)))
     }
 
     pub fn emit(self) -> Result<Vec<u8>> {
@@ -86,15 +86,15 @@ impl Wasm {
     }
 }
 
-impl TryInto<Module> for &Wasm {
+impl TryInto<Module> for Wasm {
     type Error = anyhow::Error;
 
     fn try_into(self) -> Result<Module, Self::Error> {
         match self {
-            Wasm::File(path) => Module::from_file(path)
+            Wasm::File(path) => Module::from_file(&path)
                 .with_context(|| format!("Error reading wasm file: {}", path.display())),
-            Wasm::Data(data) => Module::from_buffer(&data),
-            Wasm::Mod(_) => bail!("already contains module"),
+            Wasm::Data(data) => Module::from_buffer(data.as_slice()),
+            Wasm::Mod(mod_box) => Ok(*mod_box),
         }
     }
 }
@@ -122,7 +122,8 @@ pub fn compress_data(data: &mut [u8]) -> Result<Vec<u8>> {
         quality: 11,
         ..Default::default()
     };
-
+    // TODO: Why this is needed
+    #[allow(clippy::useless_asref)]
     brotli::BrotliCompress(&mut data.as_ref(), &mut out, &params)?;
     Ok(out)
 }
